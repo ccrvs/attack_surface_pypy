@@ -42,7 +42,7 @@ def parser_mock():
 
 @pytest.fixture
 def cloud_loader(open_mock, parser_mock, timeout_mock):
-    yield data_loader.CloudDataJSONFileLoader(path='some/')
+    yield data_loader.CloudDataJSONFileLoader(path='some/', probe=unittest.mock.Mock())
 
 
 async def test_data_loader_opens_file_at_required_path_and_reads_data(cloud_loader, open_mock, io_mock):
@@ -69,7 +69,9 @@ async def test_timeout_charges_with_the_argument_passed_to_initializer_or_defaul
         timeout_mock, parser_mock
 ):
     expected_timeout = -1
-    cloud_loader = data_loader.CloudDataJSONFileLoader(path='some/', timeout=expected_timeout)
+    cloud_loader = data_loader.CloudDataJSONFileLoader(
+        path='some/', timeout=expected_timeout, probe=unittest.mock.Mock()
+    )
     await cloud_loader.load()
 
     timeout_mock.assert_called_once_with(expected_timeout)
@@ -85,7 +87,11 @@ async def test_timeout_error_will_cause_domain_timeout_exceeded_error_with_initi
     expected_timeout = -1
     timeout_mock.side_effect = TimeoutError()
     with pytest.raises(exceptions.TimeoutExceededError) as exc_info:
-        await data_loader.CloudDataJSONFileLoader(path='some/', timeout=expected_timeout).load()
+        await data_loader.CloudDataJSONFileLoader(
+            path='some/',
+            timeout=expected_timeout,
+            probe=unittest.mock.Mock()
+        ).load()
     assert str(exc_info.value) == f'The timeout has exceeded in {expected_timeout} seconds.'
 
 

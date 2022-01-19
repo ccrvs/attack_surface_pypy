@@ -22,11 +22,7 @@ async def attack(
         probe: probes.RouteProbe = fastapi.Depends(dependencies.get_probe),
 ):
     probe.request('/attack/', state.id)
-    cloud_domain = await cloud_container.get_data_domain(
-        domain_klass=domain.CloudSurfaceDomain,
-        loader_klass=data_loader.CloudDataJSONFileLoader,
-        repository_klass=repository.CloudDataRepository,
-    )
+    cloud_domain = await cloud_container.get_data_domain()
     try:
         vms_ids = cloud_domain.get_attackers_for_vm_id(vm_id)
         probe.response('/attack/', state.id, starlette.status.HTTP_200_OK)

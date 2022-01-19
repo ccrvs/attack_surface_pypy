@@ -1,3 +1,5 @@
+import unittest.mock
+
 import pytest
 from hypothesis import strategies as st, assume, settings
 import hypothesis.stateful
@@ -40,7 +42,7 @@ class DomainMachine(hypothesis.stateful.RuleBasedStateMachine):
     def initialize(self, data):
         vms, fw_rules = data
         cloud_ = cloud.CloudEnvironmentModel(vms=vms, fw_rules=fw_rules)
-        return repository.CloudDataRepository(cloud_)
+        return repository.CloudDataRepository(cloud_, unittest.mock.Mock())
 
     @hypothesis.stateful.rule(target=VM, repository_=Repository)
     def add_vms(self, repository_):
@@ -62,9 +64,9 @@ class DomainMachine(hypothesis.stateful.RuleBasedStateMachine):
         assume(rule.dest_tag in victim_vm.tags)
         assume(all(rule.source_tag in attacker.tags for attacker in attackers_vms))
 
-        assert domain.CloudSurfaceDomain(repository_).get_attackers_for_vm_id(victim_vm.vm_id).intersection({
-            attacker.vm_id for attacker in attackers_vms
-        })
+        assert domain.CloudSurfaceDomain(
+            repository_, unittest.mock.Mock()
+        ).get_attackers_for_vm_id(victim_vm.vm_id).intersection({attacker.vm_id for attacker in attackers_vms})
 
 
 DomainTest = DomainMachine.TestCase

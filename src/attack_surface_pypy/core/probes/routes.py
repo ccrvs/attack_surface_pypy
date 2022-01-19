@@ -3,6 +3,8 @@ import time
 from attack_surface_pypy.core.probes import base
 
 
+# TODO: maybe better to create context for each request and manipulate all the activities within them?
+#  ctx.request, stx.response, cts.get_elapsed_time
 class RouteProbe(base.BaseProbe):
 
     def request(self, path, request_id):
@@ -17,7 +19,6 @@ class RouteProbe(base.BaseProbe):
             request_id=request_id,
             elapsed_sec=self._analytics.get_elapsed_time(request_id),
             status_code=status_code,
-            median_time=self._analytics.get_median_response_time(),
         )
 
     def error(self, path, error, status_code):

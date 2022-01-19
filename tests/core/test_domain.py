@@ -1,4 +1,5 @@
 import collections
+import unittest.mock
 
 import pytest
 from hypothesis import strategies as st, given, note
@@ -29,8 +30,8 @@ def cloud_surface_strategy(draw, tags_strategy=st.builds(tag.TagModel, name=st.t
 @pytest.mark.slow
 @given(cloud_surface_strategy())
 def test_get_attackers_from_vm_id_returns_all_the_attackers_against_vm_with_requested_id(cloud_environment):
-    data_repository = repository.CloudDataRepository(cloud_environment)
-    cloud_domain = domain.CloudSurfaceDomain(data_repository)
+    data_repository = repository.CloudDataRepository(cloud_environment, unittest.mock.Mock())
+    cloud_domain = domain.CloudSurfaceDomain(data_repository, unittest.mock.Mock())
 
     for virtual_machine in data_repository.get_vms():
         note("vm: %s" % virtual_machine)
@@ -44,8 +45,8 @@ def test_get_attackers_from_vm_id_returns_all_the_attackers_against_vm_with_requ
 @pytest.mark.slow
 @given(cloud_surface_strategy())
 def test_victim_tag_to_attackers_vms_map_contains_proper_relations(cloud_environment):
-    data_repository = repository.CloudDataRepository(cloud_environment)
-    cloud_domain = domain.CloudSurfaceDomain(data_repository)
+    data_repository = repository.CloudDataRepository(cloud_environment, unittest.mock.Mock())
+    cloud_domain = domain.CloudSurfaceDomain(data_repository, unittest.mock.Mock())
 
     expected_map = collections.defaultdict(set)
     for virtual_machine in data_repository.get_vms():
@@ -59,8 +60,8 @@ def test_victim_tag_to_attackers_vms_map_contains_proper_relations(cloud_environ
 @pytest.mark.slow
 @given(cloud_surface_strategy())
 def test_attacker_to_victim_tags_map_contains_proper_relations(cloud_environment):
-    data_repository = repository.CloudDataRepository(cloud_environment)
-    cloud_domain = domain.CloudSurfaceDomain(data_repository)
+    data_repository = repository.CloudDataRepository(cloud_environment, unittest.mock.Mock())
+    cloud_domain = domain.CloudSurfaceDomain(data_repository, unittest.mock.Mock())
     expected_map = collections.defaultdict(set)
     for rule in data_repository.get_firewall_rules():
         expected_map[rule.source_tag].add(rule.dest_tag)

@@ -50,7 +50,6 @@ def format_access_to_json(_, __, event_dict):
     event_dict['event'] = logging_record.name
     event_dict['pid'] = logging_record.process
     event_dict['remote_address'] = hypercorn_record.remote_address
-    event_dict['elapsed_time_sec'] = int(hypercorn_record.request_time_microsec) / 1e6  # µsec to sec
     event_dict['protocol'] = float(hypercorn_record.protocol)
     event_dict['method'] = hypercorn_record.method
     event_dict['path'] = hypercorn_record.path_qs
@@ -63,8 +62,7 @@ def format_access_to_json(_, __, event_dict):
 
 def _unparse_hypercorn_log_message(message):  # please, don't blame me
     LogStruct = collections.namedtuple('LogStruct', [
-        'remote_address', 'request_time_microsec', 'protocol',
-        'method', 'path_qs', 'status', 'response_length', 'referer', 'user_agent',
+        'remote_address', 'protocol', 'method', 'path_qs', 'status', 'response_length', 'referer', 'user_agent',
     ])
     delimiter = '#'
     return LogStruct(*message.split(delimiter))

@@ -3,6 +3,9 @@ import typing
 import fastapi
 import starlette.types
 import starlette.datastructures
+import trio
+
+from attack_surface_pypy import protocols
 
 
 class ASGIApplicationProto(typing.Protocol):
@@ -42,7 +45,11 @@ class Application(ApplicationProto):
     ) -> None:
         self._app = app_factory(**kwargs)
 
+        self._on_startup: typing.Set[typing.Callable[[], typing.Any]] = set()
+        self._on_teardown: typing.Set[typing.Callable[[], typing.Any]] = set()
+
     async def __call__(self, *args, **kwargs) -> None:
+        self._register_components()
         return await self._app(*args, **kwargs)
 
     @property
@@ -61,12 +68,23 @@ class Application(ApplicationProto):
         for middleware in middlewares:
             self._register_middleware(middleware)
 
+    def init_components(self, *components: protocols.InitializableProto) -> None:
+        for component in components:
+            self._on_startup.add(component.init)
+            self._on_teardown.add(component.dispose)
+
     def register_exception_handler(
             self,
             exception_object: typing.Type[Exception],
             handler: typing.Callable[[typing.Any, typing.Type[Exception]], typing.Coroutine]
     ) -> None:
         self._register_exception_handler(exception_object, handler)
+
+    async def _startup(self) -> None:
+        return await self._gather(*self._on_startup)
+
+    async def _teardown(self) -> None:
+        return await self._gather(*self._on_teardown)
 
     def _register_route(self, module, **kwargs) -> None:
         self._app.include_router(module.router, prefix="/api", **kwargs)
@@ -80,3 +98,12 @@ class Application(ApplicationProto):
             exception_handler: typing.Callable[[typing.Any, typing.Type[Exception]], typing.Coroutine]
     ) -> None:
         self._app.add_exception_handler(exception_object, exception_handler)
+
+    def _register_components(self) -> None:
+        self._app.on_event('startup')(self._startup)
+        self._app.on_event('shutdown')(self._teardown)
+
+    async def _gather(self, *tasks: typing.Callable) -> None:
+        async with trio.open_nursery() as nursery:
+            for task in tasks:
+                nursery.start_soon(task)

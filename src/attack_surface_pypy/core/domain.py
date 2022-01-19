@@ -24,13 +24,13 @@ class CloudSurfaceDomain:
         self._repository = data_provider
         self._probe = probe
 
-        self._graph = graph.CloudGraph(
-            vms=data_provider.get_vms(),
-            firewall_rules=data_provider.get_firewall_rules()
-        )
+        vms = data_provider.get_vms()
+        fw_rules = data_provider.get_firewall_rules()
+        self._graph = graph.CloudGraph(vms=vms, firewall_rules=fw_rules)
 
-        self._probe.inited()
+        self._probe.inited(vms_count=len(vms), fw_rules_count=len(fw_rules))
 
+    @functools.lru_cache()  # TODO: remove, just for test
     def get_attackers_for_vm_id(
             self,
             vm_id: types.VM_ID,

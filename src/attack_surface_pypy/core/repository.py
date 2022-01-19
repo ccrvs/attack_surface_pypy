@@ -55,11 +55,11 @@ class CloudDataRepository:
 
     def get_firewall_rules(
             self
-    ) -> typing.Iterable[firewall.FirewallRuleModel]:
+    ) -> typing.List[firewall.FirewallRuleModel]:
         self._probe.rules_got()
         return self._cloud_data.fw_rules
 
-    def get_vms(self) -> typing.Iterable[vm.VMModel]:
+    def get_vms(self) -> typing.List[vm.VMModel]:
         self._probe.vms_got()
         return self._cloud_data.vms
 

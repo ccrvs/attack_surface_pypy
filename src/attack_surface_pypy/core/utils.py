@@ -1,10 +1,11 @@
+__all__ = ('timeout', )
+
 import contextlib
 import typing
 
 import structlog
 import trio
 
-__all__ = ('timeout', )
 logger = structlog.get_logger()
 
 

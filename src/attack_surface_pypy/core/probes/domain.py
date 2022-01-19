@@ -3,8 +3,10 @@ from attack_surface_pypy.core.probes import base
 
 class DomainProbe(base.BaseProbe):
 
-    def inited(self):
-        self._logger.debug('domain.inited')
+    def inited(self, vms_count, fw_rules_count):
+        self._analytics.vms_count = vms_count
+        self._analytics.fw_rules_count = fw_rules_count
+        self._logger.debug('domain.inited', vms_count=vms_count, fw_rules_count=fw_rules_count)
 
     def got_attacker_for(self, vm_id):
         self._logger.debug('domain.got_attacker_for', vm_id=vm_id)

@@ -16,7 +16,6 @@ class Domain(pydantic.BaseModel):
 
 class ServiceSettings(pydantic.BaseSettings):
     service: Service = pydantic.Field(Service())
-    domain: Domain = pydantic.Field(Domain())
 
     encoding: str = 'utf-8'
     debug: bool = False

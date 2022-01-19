@@ -3,17 +3,27 @@ import typing
 import pydantic
 
 from attack_surface_pypy import app as main_app, middlewares, utils, settings
-from attack_surface_pypy.core import container, probes
+from attack_surface_pypy.core import container, probes, data_loader, repository, domain
 from attack_surface_pypy.routes.v1.routes import attack as attack_route, stats as stats_route
 
 
 def init_app(
+        file_path: str,
         application: typing.Type[main_app.Application],
         components_container: typing.Type[container.CloudSurfaceContainer],
-        probe_instrumentality: typing.Type[probes.ProbingInstrumentality]
+        probe_instrumentality_factory: typing.Type[probes.ProbingInstrumentality]
 ):
+    from collections import namedtuple
     app = application(main_app.FastAPIApplication, title="Attack surface app.")
-    app.state.container = components_container.configure(settings.domain, probe_instrumentality.init())
+    cloud_container = components_container.configure(
+        namedtuple('State', 'file_path')(file_path),
+        domain.CloudSurfaceDomain,
+        repository.CloudDataRepository,
+        data_loader.CloudDataJSONFileLoader,
+        probe_instrumentality_factory,
+    )
+    app.state.container = cloud_container
+    app.init_components(cloud_container)
     app.register_routes(
         attack_route,
         stats_route,

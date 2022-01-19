@@ -10,7 +10,7 @@ from attack_surface_pypy.logging import structlog, get_default_logging_config
 logger = structlog.get_logger()
 
 
-def run_hypercorn():
+def run_hypercorn(file_path):
     config = hypercorn.config.Config()
     config.bind = [f"{settings.service.host}:{settings.service.port}", ]
     config.debug = settings.debug  # no work since hypercorn can't use a debug with the serve
@@ -19,9 +19,11 @@ def run_hypercorn():
     config.errorlog = settings.error_log
     config.worker_class = 'trio'
     config.logconfig_dict = get_default_logging_config(settings.log_level)
-    config.access_log_format = '%(h)s#%(D)s#%(H)s#%(m)s#%(Uq)s#%(s)s#%(b)s#%(f)s#%(a)s'
-    trio.run(hypercorn.trio.serve, asgi.create_app(), config)
+    config.access_log_format = '%(h)s#%(H)s#%(m)s#%(Uq)s#%(s)s#%(b)s#%(f)s#%(a)s'
+
+    trio.run(hypercorn.trio.serve, asgi.create_app(path=file_path), config)
 
 
 if __name__ == "__main__":
-    sys.exit(run_hypercorn())  # TODO: hardcoded name, awry fabric
+    _, path = sys.argv  # TODO: pass structure with initial values
+    sys.exit(run_hypercorn(file_path=path))  # TODO: hardcoded name, awry fabric

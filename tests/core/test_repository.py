@@ -37,7 +37,7 @@ def loader_mock(cloud_data_mock):
 
 @pytest.fixture
 async def repository_object(loader_mock):
-    yield await repository.CloudDataRepository.load_from(loader_mock)
+    yield await repository.CloudDataRepository.load_from(loader_mock, unittest.mock.Mock())
 
 
 async def test_load_from_method_actually_calls_load_method_from_passed_loader_object(loader_mock, repository_object):
@@ -46,9 +46,10 @@ async def test_load_from_method_actually_calls_load_method_from_passed_loader_ob
 
 
 async def test_load_from_method_instantiates_self_with_loaded_data(loader_mock, cloud_data_mock):
+    probe_mock = unittest.mock.Mock()
     with unittest.mock.patch.object(repository.CloudDataRepository, '__new__') as new_mock:
-        await repository.CloudDataRepository.load_from(loader_mock)
-    new_mock.assert_called_once_with(repository.CloudDataRepository, cloud_data_mock)
+        await repository.CloudDataRepository.load_from(loader_mock, probe_mock)
+    new_mock.assert_called_once_with(repository.CloudDataRepository, cloud_data_mock, probe_mock)
 
 
 async def test_get_vm_by_id_method_return_required_vm_by_its_id_from_prepared_map(loader_mock):
@@ -58,7 +59,7 @@ async def test_get_vm_by_id_method_return_required_vm_by_its_id_from_prepared_ma
             new_callable=unittest.mock.PropertyMock
     ) as vm_id_map_mock:
         vm_id_map_mock.return_value = {'some_id': vm_stub}
-        repository_object = await repository.CloudDataRepository.load_from(loader_mock)
+        repository_object = await repository.CloudDataRepository.load_from(loader_mock, unittest.mock.Mock())
         assert repository_object.get_vm_by_id(types.VM_ID('some_id')) == vm_stub
         vm_id_map_mock.assert_called_once()
 
@@ -69,7 +70,7 @@ async def test_get_vm_by_id_method_on_unknown_key_raises_vm_not_found_error(load
             new_callable=unittest.mock.PropertyMock
     ) as vm_id_map_mock:
         vm_id_map_mock.return_value = {}
-        repository_object = await repository.CloudDataRepository.load_from(loader_mock)
+        repository_object = await repository.CloudDataRepository.load_from(loader_mock, unittest.mock.Mock())
         with pytest.raises(exceptions.VMNotFoundError) as exc_info:
             repository_object.get_vm_by_id(types.VM_ID('any_id'))
         assert exc_info.value.args[0] == f"VM with the given id `any_id` is not found."
