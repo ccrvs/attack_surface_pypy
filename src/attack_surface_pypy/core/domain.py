@@ -30,11 +30,8 @@ class CloudSurfaceDomain:
 
         self._probe.inited(vms_count=len(vms), fw_rules_count=len(fw_rules))
 
-    @functools.lru_cache()  # TODO: remove, just for test
-    def get_attackers_for_vm_id(
-            self,
-            vm_id: types.VM_ID,
-    ) -> typing.Set[vm.VMModel]:
+    @functools.lru_cache
+    def get_attackers_for_vm_id(self, vm_id: types.VM_ID) -> typing.Set[types.VM_ID]:
         self._probe.got_attacker_for(vm_id=vm_id)
         target_vm = self._repository.get_vm_by_id(vm_id=vm_id)
 

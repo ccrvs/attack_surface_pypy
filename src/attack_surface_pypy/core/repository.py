@@ -27,8 +27,8 @@ class CloudDataRepository:
         self._probe.inited()
 
     @classmethod
-    async def load_from(cls, loader: data_loader.DataLoaderProto, probe) -> CloudDataRepository:
-        cloud_data = await loader.load()
+    def load_from(cls, loader: data_loader.DataLoaderProto, probe) -> CloudDataRepository:
+        cloud_data = loader.load()
         repository = cls(cloud_data, probe)
         repository._probe.loaded(from_=loader.__class__.__name__)
         return repository

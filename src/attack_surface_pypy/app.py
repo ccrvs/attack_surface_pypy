@@ -49,7 +49,7 @@ class Application(ApplicationProto):
         self._on_teardown: typing.Set[typing.Callable[[], typing.Any]] = set()
 
     async def __call__(self, *args, **kwargs) -> None:
-        self._register_components()
+        # self._register_components()
         return await self._app(*args, **kwargs)
 
     @property

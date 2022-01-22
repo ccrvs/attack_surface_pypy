@@ -1,27 +1,39 @@
-import collections
-import logging
+__all__ = (
+    'structlog',
+    'get_default_logging_config',
+)
+
+import queue
+import logging.handlers
 import traceback
 
 import structlog
+import orjson
 
 from attack_surface_pypy import settings, context
 
 
-def filter_by_level(_, method_name, event_dict):
+# logging_queue = queue.Queue(-1)
+# queue_handler = logging.handlers.QueueHandler(logging_queue)
+# handler = logging.StreamHandler()
+# listener = logging.handlers.QueueListener(logging_queue, handler)
+
+
+def filter_by_level(_logger, method_name, event_dict):
     method_level, settings_level = map(logging.getLevelName, (method_name.upper(), settings.log_level))
     if method_level < settings_level:
         raise structlog.DropEvent()
     return event_dict
 
 
-def add_request_id(_, __, event_dict):
+def add_request_id(_logger, _method_name, event_dict):
     request_id = context.request_id_var.get(None)
     if request_id:
         event_dict['request_id'] = request_id
     return event_dict
 
 
-def format_traceback(_, __, event_dict):
+def format_traceback(_logger, _method_name, event_dict):
     exc_info = event_dict.get('exc_info')
     if exc_info and not isinstance(exc_info, str):
         # unwrap tb to make it readable
@@ -30,7 +42,7 @@ def format_traceback(_, __, event_dict):
     return event_dict
 
 
-def format_error_messages(_, __, event_dict):
+def format_error_messages(_logger, _method_name, event_dict):
     record = event_dict['_record']
     message_level = record.levelno
     message_key = ('error', 'message')[message_level < logging.ERROR]  # probably it's not an error.
@@ -39,33 +51,6 @@ def format_error_messages(_, __, event_dict):
     event_dict['pid'] = record.process
     event_dict['exc_info'] = record.exc_info or event_dict.get('exc_info')
     return event_dict
-
-
-def format_access_to_json(_, __, event_dict):
-    hypercorn_record = _unparse_hypercorn_log_message(event_dict['event'])
-    logging_record = event_dict['_record']
-    response_length = hypercorn_record.response_length
-    if response_length == '-':
-        response_length = 0
-    event_dict['event'] = logging_record.name
-    event_dict['pid'] = logging_record.process
-    event_dict['remote_address'] = hypercorn_record.remote_address
-    event_dict['protocol'] = float(hypercorn_record.protocol)
-    event_dict['method'] = hypercorn_record.method
-    event_dict['path'] = hypercorn_record.path_qs
-    event_dict['status'] = int(hypercorn_record.status)
-    event_dict['response_length'] = int(response_length)
-    event_dict['referer'] = hypercorn_record.referer
-    event_dict['user_agent'] = hypercorn_record.user_agent
-    return event_dict
-
-
-def _unparse_hypercorn_log_message(message):  # please, don't blame me
-    LogStruct = collections.namedtuple('LogStruct', [
-        'remote_address', 'protocol', 'method', 'path_qs', 'status', 'response_length', 'referer', 'user_agent',
-    ])
-    delimiter = '#'
-    return LogStruct(*message.split(delimiter))
 
 
 def get_default_logging_config(log_level):
@@ -78,6 +63,7 @@ def get_default_logging_config(log_level):
 
     return {
         'version': 1,
+        'level': log_level,
         'disable_existing_loggers': False,
         'formatters': {
             'json': {
@@ -85,34 +71,14 @@ def get_default_logging_config(log_level):
                 'processor': structlog.processors.JSONRenderer(),
                 'foreign_pre_chain': pre_chain,
             },
-            'error': {
-                '()': structlog.stdlib.ProcessorFormatter,
-                'processor': structlog.processors.JSONRenderer(),
-                'foreign_pre_chain': [format_error_messages, *pre_chain]
-
-            },
-            'access': {
-                '()': structlog.stdlib.ProcessorFormatter,
-                'processor': structlog.processors.JSONRenderer(),
-                'foreign_pre_chain': [format_access_to_json, *pre_chain],
-            }
         },
         'handlers': {
             'std_json': {
+                # '()': lambda: queue_handler,
                 'level': log_level,
-                'class': 'logging.StreamHandler',
                 'formatter': 'json',
-            },
-            'std_error': {
-                'level': log_level,
                 'class': 'logging.StreamHandler',
-                'formatter': 'error'
             },
-            'std_access': {
-                'level': log_level,
-                'class': 'logging.StreamHandler',
-                'formatter': 'access',
-            }
         },
         'loggers': {
             '': {
@@ -120,16 +86,6 @@ def get_default_logging_config(log_level):
                 'level': log_level,
                 'propagate': True,
             },
-            'hypercorn.access': {
-                'handlers': ['std_access', ],
-                'level': log_level,
-                'propagate': False,
-            },
-            'hypercorn.error': {
-                'handlers': ['std_error', ],
-                'level': log_level,
-                'propagate': False,
-            }
         }
     }
 
@@ -145,14 +101,13 @@ structlog.configure(
         structlog.stdlib.add_log_level,
         # TODO: sentry
         structlog.stdlib.PositionalArgumentsFormatter(),
-        structlog.processors.UnicodeDecoder(encoding=settings.encoding),
         structlog.processors.TimeStamper(utc=True),
         structlog.processors.StackInfoRenderer(),
         structlog.processors.UnicodeDecoder(),
-        structlog.processors.JSONRenderer(),
+        structlog.processors.JSONRenderer(serializer=orjson.dumps),
     ),
-    wrapper_class=structlog.stdlib.BoundLogger,  # FIXME:
-    context_class=structlog.threadlocal.wrap_dict(dict),
-    # logger_factory=structlog.stdlib.LoggerFactory(),
+    wrapper_class=structlog.make_filtering_bound_logger(logging.getLevelName(settings.log_level)),
+    context_class=dict,
+    logger_factory=structlog.BytesLoggerFactory(),
     cache_logger_on_first_use=True,
 )

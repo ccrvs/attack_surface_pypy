@@ -1,3 +1,5 @@
+import uuid
+
 import fastapi
 import starlette.status
 import starlette.requests
@@ -6,7 +8,8 @@ from attack_surface_pypy import types, dependencies
 from attack_surface_pypy.core import container, domain, data_loader, repository, exceptions, probes
 
 router = fastapi.APIRouter(prefix='/v1')
-
+import structlog
+logger = structlog.get_logger()
 
 @router.get(
     '/attack/',
@@ -19,14 +22,18 @@ async def attack(
         response: fastapi.Response,
         cloud_container: container.CloudSurfaceContainer = fastapi.Depends(dependencies.get_container),
         state: starlette.requests.State = fastapi.Depends(dependencies.get_state),
-        probe: probes.RouteProbe = fastapi.Depends(dependencies.get_probe),
+        # probe: probes.RouteProbe = fastapi.Depends(dependencies.get_probe),
 ):
-    probe.request('/attack/', state.id)
-    cloud_domain = await cloud_container.get_data_domain()
+    state.id = uuid.uuid4().hex
+    # probe.request('/attack/', state.id)
+    logger.info('/attack/', id_=state.id)
+    cloud_domain = cloud_container.get_data_domain()
     try:
         vms_ids = cloud_domain.get_attackers_for_vm_id(vm_id)
-        probe.response('/attack/', state.id, starlette.status.HTTP_200_OK)
+        logger.info('/attack/', id_=state.id, status=starlette.status.HTTP_200_OK)
+        # probe.response('/attack/', state.id, starlette.status.HTTP_200_OK)
         return vms_ids
     except exceptions.VMNotFoundError as e:
         response.status_code = starlette.status.HTTP_404_NOT_FOUND
-        probe.error('/attack/', e, response.status_code)
+        logger.info('/attack/', error=e, status=response.status_code)
+        # probe.error('/attack/', e, response.status_code)

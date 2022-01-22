@@ -1,4 +1,5 @@
 FROM pypy:3.8-7.3.7-bullseye as python-base
+#FROM python:3.8-bullseye as python-base
 
 ENV PYTHONUNBUFFERED=1 \
     TZ=":/etc/localtime" \
@@ -18,6 +19,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y curl
 
 ENV POETRY_VERSION=1.1.12
 RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | pypy
+#RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
 
 WORKDIR $PROJECT_PATH
 

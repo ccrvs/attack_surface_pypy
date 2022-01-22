@@ -19,11 +19,10 @@ class ServiceSettings(pydantic.BaseSettings):
 
     encoding: str = 'utf-8'
     debug: bool = False
-    log_level: str = 'INFO'
+    log_level: str = 'ERROR'#'INFO'
     traceback_depth: typing.Optional[int] = None
     autoreload: bool = False
-    access_log: str = pydantic.Field(constants.HYPERCORN_STDOUT)
-    error_log: str = pydantic.Field(constants.HYPERCORN_STDOUT)
+    backlog: int = 4096
 
     class Config:
         env_prefix = 'as_'

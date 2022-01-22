@@ -7,12 +7,15 @@ authors = ["crvs <a3.dudko@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 fastapi = "^0.70.1"
-structlog = "^21.5.0"
-trio = "^0.19.0"
-hypercorn = {extras = ["trio"], version = "^0.13.2"}
 pydantic = {extras = ["dotenv"], version = "^1.9.0"}
 trio-typing = "^0.7.0"
 asyncstdlib = "^3.10.2"
+uvicorn = {extras = ["uvloop"], version = "^0.17.0"}
+uvloop = "^0.16.0"
+httptools = "^0.3.0"
+structlog = "^21.5.0"
+wsproto = "^1.0.0"
+orjson = "^3.6.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -23,6 +26,7 @@ pytest-trio = "^0.7.0"
 hypothesis = "^6.35.0"
 locust = "^2.5.1"
 pytest-cov = "^3.0.0"
+guppy3 = "^3.1.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

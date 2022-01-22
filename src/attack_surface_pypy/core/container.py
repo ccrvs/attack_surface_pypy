@@ -11,7 +11,7 @@ __all__ = (
 
 import typing
 
-import asyncstdlib.functools as functools
+import functools
 
 from attack_surface_pypy import protocols
 from attack_surface_pypy.logging import structlog
@@ -51,36 +51,36 @@ class CloudSurfaceContainer(protocols.InitializableProto):
         instance._probe.inited()
         return instance
 
-    async def init(self,) -> None:
-        await self.get_data_loader()
-        await self.get_data_repository()
-        await self.get_data_domain()
+    def init(self) -> None:
+        self.get_data_loader()
+        self.get_data_repository()
+        self.get_data_domain()
 
-    async def dispose(self) -> None:
+    def dispose(self) -> None:
         ...
 
-    @functools.lru_cache
-    async def get_data_loader(self) -> data_loader.CloudDataJSONFileLoader:
+    @functools.lru_cache(maxsize=1)
+    def get_data_loader(self) -> data_loader.CloudDataJSONFileLoader:
         probe = self._probe_instrumentality.register_probe('CloudDataJSONFileLoader', probes.DataLoaderProbe)
         data_loader_object = self._loader_klass(self._domain_state.file_path, probe)
         self._probe.component_inited(component=self._loader_klass.__name__)  # TODO: suppress loudmouther for tests
         return data_loader_object
 
-    @functools.lru_cache
-    async def get_data_repository(self) -> repository.CloudDataRepository:
-        loader = await self.get_data_loader()
+    @functools.lru_cache(maxsize=1)
+    def get_data_repository(self) -> repository.CloudDataRepository:
+        loader = self.get_data_loader()
         probe = self._probe_instrumentality.register_probe('CloudDataRepository', probes.RepositoryProbe)
-        data_repository_object = await self._repository_klass.load_from(loader, probe)
+        data_repository_object = self._repository_klass.load_from(loader, probe)
         self._probe.component_inited(component=self._repository_klass.__name__)
         return data_repository_object
 
-    @functools.lru_cache
-    async def get_data_domain(self) -> domain.CloudSurfaceDomain:
+    @functools.lru_cache(maxsize=1)
+    def get_data_domain(self) -> domain.CloudSurfaceDomain:
         probe = self._probe_instrumentality.register_probe('CloudSurfaceDomain', probes.DomainProbe)
-        data_repository = await self.get_data_repository()
+        data_repository = self.get_data_repository()
         domain_object = self._domain_klass(data_repository, probe)
         self._probe.component_inited(component=self._domain_klass.__name__)
         return domain_object
 
-    async def get_probe_instrumentality(self) -> probes.ProbingInstrumentality:
+    def get_probe_instrumentality(self) -> probes.ProbingInstrumentality:
         return self._probe_instrumentality

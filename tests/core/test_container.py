@@ -57,7 +57,7 @@ def test_configure_class_method_works_as_factory_initializing_class_with_a_state
 
 
 async def test_get_data_loader_returns_data_loader_object(container_object, data_loader_mock, probe_mock):
-    data_loader = await container_object.get_data_loader()
+    data_loader = container_object.get_data_loader()
 
     data_loader_mock.assert_called_once_with('some/', probe_mock().register_probe())
     assert data_loader is data_loader_mock()

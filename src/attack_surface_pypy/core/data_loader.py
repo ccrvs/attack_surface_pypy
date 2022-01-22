@@ -14,7 +14,7 @@ logger = structlog.get_logger()
 
 class DataLoaderProto(typing.Protocol[T_co]):
 
-    async def load(self) -> T_co:
+    def load(self) -> T_co:
         ...
 
 
@@ -34,16 +34,18 @@ class CloudDataJSONFileLoader(DataLoaderProto[cloud.CloudEnvironmentModel]):
         # TODO: maybe switch to domain probing logging?
         self._probe.inited(timeout=timeout, path=path)
 
-    async def load(self) -> cloud.CloudEnvironmentModel:
+    def load(self) -> cloud.CloudEnvironmentModel:
         try:
-            with utils.timeout(self._timeout):
-                # return cloud.CloudEnvironmentModel.parse_file(self._path)
-                async with await trio.open_file(self._path, 'r') as f:
-                    content = await f.read()
-                    self._probe.read(path=self._path)
-                    model = cloud.CloudEnvironmentModel.parse_raw(content)
-                    self._probe.loaded(path=self._path)
-                    return model
+            # with utils.timeout(self._timeout):
+            data_model = cloud.CloudEnvironmentModel.parse_file(self._path)
+            self._probe.loaded(path=self._path)
+            return data_model
+                # async with await trio.open_file(self._path, 'r') as f:
+                #     content = await f.read()
+                    # self._probe.read(path=self._path)
+                    # model = cloud.CloudEnvironmentModel.parse_raw(content)
+                    # self._probe.loaded(path=self._path)
+                    # return model
         # TODO: ValidationError?
         except TimeoutError as e:
             # FIXME: yes, I know about logger.exception, but it's now working

@@ -37,7 +37,6 @@ class ProbingInstrumentality:
             self,
             name: str,
             probe_klass: typing.Type[T],
-            logger_factory: typing.Callable[[], typing.Any] = structlog.get_logger,
             analytics_factory: typing.Callable[[], typing.Any] = types.SimpleNamespace,
     ) -> T:
         """
@@ -49,8 +48,8 @@ class ProbingInstrumentality:
         :param analytics_factory: callable object returns an analytics instance.
         :return: a registered probe.
         """
-        component = probe_klass(logger_factory, analytics_factory)
         if name not in self._registered_components:
+            component = probe_klass(analytics_factory)
             self._registered_components[name] = component
         return self._registered_components[name]
 
