@@ -31,7 +31,6 @@ CloudStrategy = TagsStrategy.flatmap(
 )
 
 
-@pytest.mark.slow
 @settings(max_examples=2000)
 class DomainMachine(hypothesis.stateful.RuleBasedStateMachine):
     Repository = hypothesis.stateful.Bundle('Repository')
@@ -69,4 +68,4 @@ class DomainMachine(hypothesis.stateful.RuleBasedStateMachine):
         ).get_attackers_for_vm_id(victim_vm.vm_id).intersection({attacker.vm_id for attacker in attackers_vms})
 
 
-DomainTest = DomainMachine.TestCase
+DomainTest = pytest.mark.slow(DomainMachine.TestCase)

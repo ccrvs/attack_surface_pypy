@@ -11,22 +11,29 @@ pydantic = {extras = ["dotenv"], version = "^1.9.0"}
 trio-typing = "^0.7.0"
 asyncstdlib = "^3.10.2"
 uvicorn = {extras = ["uvloop"], version = "^0.17.0"}
-uvloop = "^0.16.0"
 httptools = "^0.3.0"
 structlog = "^21.5.0"
 wsproto = "^1.0.0"
 orjson = "^3.6.5"
+invoke = "^1.6.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
 ipython = "^7.31.0"
 mypy = "^0.931"
 ipdb = "^0.13.9"
-pytest-trio = "^0.7.0"
 hypothesis = "^6.35.0"
 locust = "^2.5.1"
 pytest-cov = "^3.0.0"
-guppy3 = "^3.1.2"
+pylint = "^2.12.2"
+flake8 = "^4.0.1"
+bandit = "^1.7.1"
+vulture = "^2.3"
+unify = "^0.5"
+yapf = "^0.32.0"
+isort = "^5.10.1"
+pytest = "^6.2.5"
+pytest-asyncio = "^0.17.2"
+pytest-dotenv = "^0.5.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

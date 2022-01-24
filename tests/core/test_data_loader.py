@@ -45,49 +45,49 @@ def cloud_loader(open_mock, parser_mock, timeout_mock):
     yield data_loader.CloudDataJSONFileLoader(path='some/', probe=unittest.mock.Mock())
 
 
-async def test_data_loader_opens_file_at_required_path_and_reads_data(cloud_loader, open_mock, io_mock):
+def test_data_loader_opens_file_at_required_path_and_reads_data(cloud_loader, open_mock, io_mock):
     with unittest.mock.patch('attack_surface_pypy.core.data_loader.cloud.CloudEnvironmentModel.parse_raw'):
-        await cloud_loader.load()
+        cloud_loader.load()
 
     open_mock.assert_called_once_with('some/', 'r')
     io_mock.read.assert_called_once()
 
 
-async def test_data_loader_passes_read_data_to_model_parser(cloud_loader, parser_mock):
-    await cloud_loader.load()
+def test_data_loader_passes_read_data_to_model_parser(cloud_loader, parser_mock):
+    cloud_loader.load()
 
     parser_mock.assert_called_with("{}")
 
 
-async def test_data_loader_returns_object_created_by_model_parser(cloud_loader, parser_mock):
+def test_data_loader_returns_object_created_by_model_parser(cloud_loader, parser_mock):
     parser_mock.return_value = expected_result = {}
-    actual_result = await cloud_loader.load()
+    actual_result = cloud_loader.load()
     assert actual_result == expected_result
 
 
-async def test_timeout_charges_with_the_argument_passed_to_initializer_or_default_value_otherwise(
+def test_timeout_charges_with_the_argument_passed_to_initializer_or_default_value_otherwise(
         timeout_mock, parser_mock
 ):
     expected_timeout = -1
     cloud_loader = data_loader.CloudDataJSONFileLoader(
         path='some/', timeout=expected_timeout, probe=unittest.mock.Mock()
     )
-    await cloud_loader.load()
+    cloud_loader.load()
 
     timeout_mock.assert_called_once_with(expected_timeout)
 
 
-async def test_timeout_charges_with_default_constant_if_any_hasnt_been_provided(cloud_loader, timeout_mock):
-    await cloud_loader.load()
+def test_timeout_charges_with_default_constant_if_any_hasnt_been_provided(cloud_loader, timeout_mock):
+    cloud_loader.load()
 
     timeout_mock.assert_called_once_with(30)  # free invariance coverage!
 
 
-async def test_timeout_error_will_cause_domain_timeout_exceeded_error_with_initialization_timeout(timeout_mock):
+def test_timeout_error_will_cause_domain_timeout_exceeded_error_with_initialization_timeout(timeout_mock):
     expected_timeout = -1
     timeout_mock.side_effect = TimeoutError()
     with pytest.raises(exceptions.TimeoutExceededError) as exc_info:
-        await data_loader.CloudDataJSONFileLoader(
+        data_loader.CloudDataJSONFileLoader(
             path='some/',
             timeout=expected_timeout,
             probe=unittest.mock.Mock()
@@ -95,20 +95,20 @@ async def test_timeout_error_will_cause_domain_timeout_exceeded_error_with_initi
     assert str(exc_info.value) == f'The timeout has exceeded in {expected_timeout} seconds.'
 
 
-async def test_type_error_will_cause_domain_invalid_file_data_error(cloud_loader, parser_mock):
+def test_type_error_will_cause_domain_invalid_file_data_error(cloud_loader, parser_mock):
     parser_mock.side_effect = TypeError()
 
     with pytest.raises(exceptions.InvalidFileDataError) as exc_info:
-        await cloud_loader.load()
+        cloud_loader.load()
 
     assert str(exc_info.value) == 'Unable to parse data at some/'
 
 
-async def test_os_error_will_cause_domain_internal_error(cloud_loader, open_mock):
+def test_os_error_will_cause_domain_internal_error(cloud_loader, open_mock):
     open_mock.side_effect = OSError()
 
     with pytest.raises(exceptions.InternalError) as exc_info:
-        await cloud_loader.load()
+        cloud_loader.load()
 
     assert str(exc_info.value) == 'An internal error has occurred.'
 
@@ -118,8 +118,8 @@ async def test_os_error_will_cause_domain_internal_error(cloud_loader, open_mock
     ('Some value error', ValueError),
     ('Some bare exception', Exception),
 ])
-async def test_all_other_exceptions_will_cause_domain_internal_error(_, exc, cloud_loader, parser_mock):
+def test_all_other_exceptions_will_cause_domain_internal_error(_, exc, cloud_loader, parser_mock):
     parser_mock.side_effect = exc()
 
     with pytest.raises(exceptions.InternalError):
-        await cloud_loader.load()
+        cloud_loader.load()

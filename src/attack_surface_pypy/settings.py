@@ -6,7 +6,7 @@ from attack_surface_pypy import constants
 
 
 class Service(pydantic.BaseModel):
-    host: str = pydantic.Field('localhost')
+    host: str = pydantic.Field('0.0.0.0')  # FIXME: bind to all interfaces  # nosec
     port: int = pydantic.Field(8080, ge=1000, le=65535)  # TODO: maybe borders to constants?
 
 

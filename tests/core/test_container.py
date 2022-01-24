@@ -14,7 +14,7 @@ def probe_mock():
 def repository_mock():
     repository_mock = unittest.mock.MagicMock(name='repository-mock')
     repository_mock.__name__ = 'repository-mock'
-    repository_mock.load_from = unittest.mock.AsyncMock(side_effect=repository_mock)
+    repository_mock.load_from = unittest.mock.Mock(side_effect=repository_mock)
     yield repository_mock
 
 
@@ -56,26 +56,26 @@ def test_configure_class_method_works_as_factory_initializing_class_with_a_state
     assert container_object._domain_state == state_mock
 
 
-async def test_get_data_loader_returns_data_loader_object(container_object, data_loader_mock, probe_mock):
+def test_get_data_loader_returns_data_loader_object(container_object, data_loader_mock, probe_mock):
     data_loader = container_object.get_data_loader()
 
     data_loader_mock.assert_called_once_with('some/', probe_mock().register_probe())
     assert data_loader is data_loader_mock()
 
 
-async def test_get_data_repository_returns_data_repository_object(
+def test_get_data_repository_returns_data_repository_object(
         container_object, repository_mock, data_loader_mock, probe_mock
 ):
-    data_repository = await container_object.get_data_repository()
+    data_repository = container_object.get_data_repository()
 
     repository_mock.load_from.assert_called_once_with(data_loader_mock(), probe_mock().register_probe())
     assert data_repository is repository_mock()
 
 
-async def test_get_data_domain_returns_data_domain_object(
+def test_get_data_domain_returns_data_domain_object(
         container_object, domain_mock, repository_mock, data_loader_mock, probe_mock
 ):
-    data_domain = await container_object.get_data_domain()
+    data_domain = container_object.get_data_domain()
 
     domain_mock.assert_called_once_with(repository_mock(), probe_mock().register_probe())
     assert data_domain is domain_mock()

@@ -7,9 +7,6 @@ from attack_surface_pypy.core import container, probes, data_loader, repository,
 from attack_surface_pypy.routes.v1.routes import attack as attack_route, stats as stats_route
 
 
-import guppy
-heap = guppy.hpy()
-
 def init_app(
         file_path: str,
         application: typing.Type[main_app.Application],

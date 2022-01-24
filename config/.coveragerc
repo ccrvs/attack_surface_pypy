@@ -1,0 +1,12 @@
+[run]
+omit = 
+    *tests*
+
+[report]
+exclude_lines = 
+    pragma: no cover
+    @abc
+    raise NotImplementedError
+    raise AssertionError
+fail_under = 70
+show_missing = true

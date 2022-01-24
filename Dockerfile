@@ -1,5 +1,5 @@
-FROM pypy:3.8-7.3.7-bullseye as python-base
-#FROM python:3.8-bullseye as python-base
+# FROM pypy:3.8-7.3.7-bullseye as python-base
+FROM python:3.8-bullseye as python-base
 
 ENV PYTHONUNBUFFERED=1 \
     TZ=":/etc/localtime" \
@@ -15,11 +15,11 @@ ENV PATH="${POETRY_HOME}/bin:${VENV_PATH}/bin:${PATH}"
 
 FROM python-base as builder-base
 
-RUN apt-get update && apt-get install --no-install-recommends -y curl
+RUN apt-get update && apt-get install --no-install-recommends -y curl cargo
 
 ENV POETRY_VERSION=1.1.12
-RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | pypy
-#RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+# RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | pypy
+RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
 
 WORKDIR $PROJECT_PATH
 
@@ -38,4 +38,4 @@ COPY . .
 RUN poetry install --no-dev
 
 EXPOSE 8080
-CMD ["poetry", "run", "pypy", "-m", "attack_surface_pypy"]
+# CMD ["poetry", "run", "pypy", "-m", "attack_surface_pypy"]
