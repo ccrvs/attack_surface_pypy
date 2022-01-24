@@ -18,7 +18,7 @@ logger = structlog.get_logger()
 
 
 class CloudSurfaceDomain:
-    __slots__ = '_repository', '_graph', '_probe'
+    __slots__ = "_repository", "_graph", "_probe"
 
     def __init__(self, data_provider: repository.CloudDataRepository, probe: probes.DomainProbe):
         self._repository = data_provider

@@ -1,6 +1,6 @@
 __all__ = (
-    'structlog',
-    'get_default_logging_config',
+    "structlog",
+    "get_default_logging_config",
 )
 
 import logging.handlers
@@ -28,27 +28,27 @@ def filter_by_level(_logger, method_name, event_dict):
 def add_request_id(_logger, _method_name, event_dict):
     request_id = context.request_id_var.get(None)
     if request_id:
-        event_dict['request_id'] = request_id
+        event_dict["request_id"] = request_id
     return event_dict
 
 
 def format_traceback(_logger, _method_name, event_dict):
-    exc_info = event_dict.get('exc_info')
+    exc_info = event_dict.get("exc_info")
     if exc_info and not isinstance(exc_info, str):
         # unwrap tb to make it readable
-        event_dict['exc_info'] = traceback.format_exception(*exc_info, limit=settings.traceback_depth)
-        event_dict['tb_depth'] = settings.traceback_depth
+        event_dict["exc_info"] = traceback.format_exception(*exc_info, limit=settings.traceback_depth)
+        event_dict["tb_depth"] = settings.traceback_depth
     return event_dict
 
 
 def format_error_messages(_logger, _method_name, event_dict):
-    record = event_dict['_record']
+    record = event_dict["_record"]
     message_level = record.levelno
-    message_key = ('error', 'message')[message_level < logging.ERROR]  # probably it's not an error.
+    message_key = ("error", "message")[message_level < logging.ERROR]  # probably it's not an error.
     event_dict[message_key] = record.msg  # TODO: shrink message?
-    event_dict['event'] = record.name
-    event_dict['pid'] = record.process
-    event_dict['exc_info'] = record.exc_info or event_dict.get('exc_info')
+    event_dict["event"] = record.name
+    event_dict["pid"] = record.process
+    event_dict["exc_info"] = record.exc_info or event_dict.get("exc_info")
     return event_dict
 
 
@@ -61,29 +61,29 @@ def get_default_logging_config(log_level):
     ]
 
     return {
-        'version': 1,
-        'level': log_level,
-        'disable_existing_loggers': False,
-        'formatters': {
-            'json': {
-                '()': structlog.stdlib.ProcessorFormatter,
-                'processor': structlog.processors.JSONRenderer(),
-                'foreign_pre_chain': pre_chain,
+        "version": 1,
+        "level": log_level,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "json": {
+                "()": structlog.stdlib.ProcessorFormatter,
+                "processor": structlog.processors.JSONRenderer(),
+                "foreign_pre_chain": pre_chain,
             },
         },
-        'handlers': {
-            'std_json': {
+        "handlers": {
+            "std_json": {
                 # '()': lambda: queue_handler,
-                'level': log_level,
-                'formatter': 'json',
-                'class': 'logging.StreamHandler',
+                "level": log_level,
+                "formatter": "json",
+                "class": "logging.StreamHandler",
             },
         },
-        'loggers': {
-            '': {
-                'handlers': ['std_json', ],
-                'level': log_level,
-                'propagate': True,
+        "loggers": {
+            "": {
+                "handlers": ["std_json", ],
+                "level": log_level,
+                "propagate": True,
             },
         }
     }

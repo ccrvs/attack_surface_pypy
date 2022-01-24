@@ -5,7 +5,7 @@ ProbingInstrumentality -- a simple probes repository-like object.
 """
 
 __all__ = (
-    'ProbingInstrumentality',
+    "ProbingInstrumentality",
 )
 
 import types
@@ -13,7 +13,7 @@ import typing
 
 import structlog
 
-T = typing.TypeVar('T', bound="BaseProbe")
+T = typing.TypeVar("T", bound="BaseProbe")
 
 
 class ProbingInstrumentality:

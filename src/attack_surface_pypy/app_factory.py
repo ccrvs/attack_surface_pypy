@@ -24,7 +24,7 @@ def init_app(
     from collections import namedtuple
     app = application(main_app.FastAPIApplication, title="Attack surface app.")
     cloud_container = components_container.configure(
-        namedtuple('State', 'file_path')(file_path),
+        namedtuple("State", "file_path")(file_path),
         domain.CloudSurfaceDomain,
         repository.CloudDataRepository,
         data_loader.CloudDataJSONFileLoader,

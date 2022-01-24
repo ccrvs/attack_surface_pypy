@@ -4,7 +4,7 @@ from attack_surface_pypy.models.v1.models import firewall, tag, vm
 
 
 class CloudGraph:
-    __slots__ = '_vms_nodes', '_firewall_rules_nodes',
+    __slots__ = "_vms_nodes", "_firewall_rules_nodes",
 
     def __init__(
             self,

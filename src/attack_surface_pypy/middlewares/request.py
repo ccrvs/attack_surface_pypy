@@ -7,7 +7,7 @@ import starlette.responses
 
 from attack_surface_pypy import constants, context
 
-T = typing.TypeVar('T', bound=starlette.responses.Response)
+T = typing.TypeVar("T", bound=starlette.responses.Response)
 
 
 # it turned out that middlewares are extremely slow thus I've decided to shrink them as much as possible at least into

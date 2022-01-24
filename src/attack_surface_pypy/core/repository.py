@@ -14,7 +14,7 @@ logger = structlog.get_logger()
 
 
 class CloudDataRepository:
-    __slots__ = '_cloud_data', '_vm_id_to_vm_map', '_probe'
+    __slots__ = "_cloud_data", "_vm_id_to_vm_map", "_probe"
 
     def __init__(self, cloud_data: cloud.CloudEnvironmentModel, probe: probes.RepositoryProbe) -> None:
         self._cloud_data = cloud_data

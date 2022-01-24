@@ -100,8 +100,8 @@ class Application(ApplicationProto):
         self._app.add_exception_handler(exception_object, exception_handler)
 
     def _register_components(self) -> None:
-        self._app.on_event('startup')(self._startup)
-        self._app.on_event('shutdown')(self._teardown)
+        self._app.on_event("startup")(self._startup)
+        self._app.on_event("shutdown")(self._teardown)
 
     async def _gather(self, *tasks: typing.Callable) -> None:
         async with trio.open_nursery() as nursery:

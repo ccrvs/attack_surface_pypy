@@ -6,7 +6,7 @@ CloudSurfaceContainer -- a simple implementation of the IoC container for the ap
 from __future__ import annotations
 
 __all__ = (
-    'CloudSurfaceContainer',
+    "CloudSurfaceContainer",
 )
 
 import functools
@@ -35,7 +35,7 @@ class CloudSurfaceContainer(protocols.InitializableProto):
         self._repository_klass = repository_klass
         self._loader_klass = loader_klass
         self._probe_instrumentality = probe_instrumentality()
-        self._probe = self._probe_instrumentality.register_probe('ContainerProbe', probes.ContainerProbe)
+        self._probe = self._probe_instrumentality.register_probe("ContainerProbe", probes.ContainerProbe)
 
     @classmethod
     def configure(
@@ -60,7 +60,7 @@ class CloudSurfaceContainer(protocols.InitializableProto):
 
     @functools.lru_cache(maxsize=1)
     def get_data_loader(self) -> data_loader.CloudDataJSONFileLoader:
-        probe = self._probe_instrumentality.register_probe('CloudDataJSONFileLoader', probes.DataLoaderProbe)
+        probe = self._probe_instrumentality.register_probe("CloudDataJSONFileLoader", probes.DataLoaderProbe)
         data_loader_object = self._loader_klass(self._domain_state.file_path, probe)
         self._probe.component_inited(component=self._loader_klass.__name__)  # TODO: suppress loudmouther for tests
         return data_loader_object
@@ -68,14 +68,14 @@ class CloudSurfaceContainer(protocols.InitializableProto):
     @functools.lru_cache(maxsize=1)
     def get_data_repository(self) -> repository.CloudDataRepository:
         loader = self.get_data_loader()
-        probe = self._probe_instrumentality.register_probe('CloudDataRepository', probes.RepositoryProbe)
+        probe = self._probe_instrumentality.register_probe("CloudDataRepository", probes.RepositoryProbe)
         data_repository_object = self._repository_klass.load_from(loader, probe)
         self._probe.component_inited(component=self._repository_klass.__name__)
         return data_repository_object
 
     @functools.lru_cache(maxsize=1)
     def get_data_domain(self) -> domain.CloudSurfaceDomain:
-        probe = self._probe_instrumentality.register_probe('CloudSurfaceDomain', probes.DomainProbe)
+        probe = self._probe_instrumentality.register_probe("CloudSurfaceDomain", probes.DomainProbe)
         data_repository = self.get_data_repository()
         domain_object = self._domain_klass(data_repository, probe)
         self._probe.component_inited(component=self._domain_klass.__name__)

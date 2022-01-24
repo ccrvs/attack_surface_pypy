@@ -23,7 +23,7 @@ def get_probe(
         instrumentality: probes.ProbingInstrumentality = fastapi.Depends(get_probe_instrumentality)
 ) -> probes.RouteProbe:
     return instrumentality.register_probe(
-        'Route',
+        "Route",
         probes.RouteProbe,
         analytics_factory=analytics.RouteAnalytics
     )
