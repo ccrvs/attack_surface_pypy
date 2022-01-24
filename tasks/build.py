@@ -10,7 +10,7 @@ from .base import print_done, finalize
 def build_app(context):
     print("Building app...")
     context.run('poetry build --format=wheel > /dev/null')
-    print_done()
+    print_done(indent=4)
 
 
 @invoke.task(default=True, post=[build_app, finalize, ])

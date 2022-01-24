@@ -8,8 +8,8 @@ SRC_PATH = ROOT_PATH / 'src'
 CONFIG_PATH = ROOT_PATH / 'config'
 
 
-def print_done():
-    print('ok.')
+def print_done(*, indent=0):
+    print(' ' * indent + 'ok.')
 
 
 @invoke.task

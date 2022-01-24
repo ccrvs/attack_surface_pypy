@@ -8,7 +8,7 @@ def clean_pyc(context):
     print('Cleaning compiled files...')
     context.run('find . -type f -name ".py[co]" -delete')
     context.run('find . -type d -name "__pycache__" -delete')
-    print_done()
+    print_done(indent=4)
 
 
 @invoke.task
@@ -17,7 +17,7 @@ def clean_build(context):
     context.run('rm --force --recursive build/')
     context.run('rm --force --recursive dist/')
     context.run('rm --force --recursive *.egg-info')
-    print_done()
+    print_done(indent=4)
 
 
 @invoke.task
@@ -28,7 +28,7 @@ def clean_test(context):
     context.run('rm -rf htmlcov/')
     context.run('rm -rf .mypy_cache/')
     context.run('rm -rf .hypothesis/')
-    print_done()
+    print_done(indent=4)
 
 
 @invoke.task(name='clean', default=True, post=[clean_build, clean_pyc, clean_test, finalize, ])

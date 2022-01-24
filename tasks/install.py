@@ -24,7 +24,7 @@ def install_all(context, no_dev=False, verbose=False):
     context.run('poetry install {no_dev} {verbosity}'.format(
         no_dev='--no-dev' if no_dev else "", verbosity=to_devnull,
     ), **extra)
-    print_done()
+    print_done(indent=4)
 
 
 installer = invoke.Collection('install')
