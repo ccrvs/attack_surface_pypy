@@ -8,7 +8,7 @@ import structlog
 
 from attack_surface_pypy import types
 from attack_surface_pypy.core import data_loader, exceptions, probes
-from attack_surface_pypy.models.v1.models import cloud, vm, firewall
+from attack_surface_pypy.models.v1.models import cloud, firewall, vm
 
 logger = structlog.get_logger()
 

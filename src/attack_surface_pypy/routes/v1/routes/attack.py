@@ -1,14 +1,22 @@
 import uuid
 
 import fastapi
-import starlette.status
 import starlette.requests
+import starlette.status
 
-from attack_surface_pypy import types, dependencies
-from attack_surface_pypy.core import container, domain, data_loader, repository, exceptions, probes
+from attack_surface_pypy import dependencies, types
+from attack_surface_pypy.core import (
+    container,
+    data_loader,
+    domain,
+    exceptions,
+    probes,
+    repository,
+)
 
 router = fastapi.APIRouter(prefix='/v1')
 import structlog
+
 logger = structlog.get_logger()
 
 @router.get(

@@ -1,4 +1,5 @@
-from attack_surface_pypy import app as main_app, app_factory
+from attack_surface_pypy import app as main_app
+from attack_surface_pypy import app_factory
 from attack_surface_pypy.core import container, probes
 
 

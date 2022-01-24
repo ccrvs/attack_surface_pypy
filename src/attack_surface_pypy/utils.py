@@ -1,7 +1,7 @@
 import typing
 
-import fastapi.exceptions
 import fastapi.exception_handlers
+import fastapi.exceptions
 
 
 async def validation_error_handler(request: typing.Any, exception: typing.Type[Exception]):

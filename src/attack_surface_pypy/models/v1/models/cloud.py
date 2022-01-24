@@ -1,6 +1,6 @@
 import typing
 
-from attack_surface_pypy.models.v1.models import base, vm, firewall
+from attack_surface_pypy.models.v1.models import base, firewall, vm
 
 
 class CloudEnvironmentModel(base.BaseModel):

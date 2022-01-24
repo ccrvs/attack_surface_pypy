@@ -1,12 +1,11 @@
 from __future__ import annotations
+
 import pathlib
 import typing
 
-import trio
-
+from attack_surface_pypy.core import exceptions, probes, utils
 from attack_surface_pypy.logging import structlog
-from attack_surface_pypy.core import utils, exceptions, probes
-from attack_surface_pypy.models.v1.models import cloud, base
+from attack_surface_pypy.models.v1.models import base, cloud
 
 T_co = typing.TypeVar('T_co', bound=base.BaseModel, covariant=True)
 logger = structlog.get_logger()

@@ -1,6 +1,6 @@
 import typing
 
-from attack_surface_pypy.models.v1.models import vm, firewall, tag
+from attack_surface_pypy.models.v1.models import firewall, tag, vm
 
 
 class CloudGraph:

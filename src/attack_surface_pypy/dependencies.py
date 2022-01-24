@@ -1,8 +1,8 @@
 import fastapi
-import starlette.requests
 import starlette.datastructures
+import starlette.requests
 
-from attack_surface_pypy.core import container, probes, analytics
+from attack_surface_pypy.core import analytics, container, probes
 
 
 def get_state(request: starlette.requests.Request) -> starlette.requests.State:

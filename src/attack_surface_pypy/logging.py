@@ -3,15 +3,14 @@ __all__ = (
     'get_default_logging_config',
 )
 
-import queue
 import logging.handlers
+import queue
 import traceback
 
-import structlog
 import orjson
+import structlog
 
-from attack_surface_pypy import settings, context
-
+from attack_surface_pypy import context, settings
 
 # logging_queue = queue.Queue(-1)
 # queue_handler = logging.handlers.QueueHandler(logging_queue)

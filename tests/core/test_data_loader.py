@@ -14,21 +14,21 @@ def timeout_mock():  # no need to spawn a thread on each `load` method call
 
 @pytest.fixture
 def io_mock():
-    io_mock = unittest.mock.AsyncMock(name='io-mock')
+    io_mock = unittest.mock.Mock(name='io-mock')
     io_mock.read.return_value = "{}"
     yield io_mock
 
 
 @pytest.fixture
-def async_context_manager_mock(io_mock):
-    cm_mock = unittest.mock.AsyncMock(name='cm-mock')
-    cm_mock.__aenter__.return_value = io_mock
+def context_manager_mock(io_mock):
+    cm_mock = unittest.mock.MagicMock(name='cm-mock')
+    cm_mock.__enter__.return_value = io_mock
     yield cm_mock
 
 
 @pytest.fixture(autouse=True)
-def open_mock(async_context_manager_mock):
-    open_mock = unittest.mock.AsyncMock(name='open-mock', return_value=async_context_manager_mock)
+def open_mock(context_manager_mock):
+    open_mock = unittest.mock.Mock(name='open-mock', return_value=context_manager_mock)
     with unittest.mock.patch('attack_surface_pypy.core.data_loader.trio.open_file', open_mock):
         yield open_mock
 

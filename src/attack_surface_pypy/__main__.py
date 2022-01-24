@@ -1,14 +1,20 @@
 import collections
+import gc
 import sys
 import urllib.parse
-import gc
 
-import uvicorn
 import orjson
+import uvicorn
 
-from attack_surface_pypy import settings, asgi
-from attack_surface_pypy.core import container, data_loader, domain, probes, repository
-from attack_surface_pypy.logging import structlog, get_default_logging_config
+from attack_surface_pypy import asgi, settings
+from attack_surface_pypy.core import (
+    container,
+    data_loader,
+    domain,
+    probes,
+    repository,
+)
+from attack_surface_pypy.logging import get_default_logging_config, structlog
 
 gc.disable()
 

@@ -9,13 +9,12 @@ __all__ = (
     'CloudSurfaceContainer',
 )
 
+import functools
 import typing
 
-import functools
-
 from attack_surface_pypy import protocols
+from attack_surface_pypy.core import data_loader, domain, probes, repository
 from attack_surface_pypy.logging import structlog
-from attack_surface_pypy.core import repository, domain, data_loader, probes
 from attack_surface_pypy.settings import Domain
 
 logger = structlog.get_logger()

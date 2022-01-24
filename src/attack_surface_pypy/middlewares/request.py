@@ -5,7 +5,7 @@ import uuid
 import starlette.requests
 import starlette.responses
 
-from attack_surface_pypy import context, constants
+from attack_surface_pypy import constants, context
 
 T = typing.TypeVar('T', bound=starlette.responses.Response)
 

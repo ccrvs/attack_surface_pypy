@@ -1,6 +1,6 @@
 import fastapi
-import starlette.status
 import starlette.requests
+import starlette.status
 
 from attack_surface_pypy import dependencies
 from attack_surface_pypy.core import probes

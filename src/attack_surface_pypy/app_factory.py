@@ -2,9 +2,17 @@ import typing
 
 import pydantic
 
-from attack_surface_pypy import app as main_app, middlewares, utils, settings
-from attack_surface_pypy.core import container, probes, data_loader, repository, domain
-from attack_surface_pypy.routes.v1.routes import attack as attack_route, stats as stats_route
+from attack_surface_pypy import app as main_app
+from attack_surface_pypy import middlewares, settings, utils
+from attack_surface_pypy.core import (
+    container,
+    data_loader,
+    domain,
+    probes,
+    repository,
+)
+from attack_surface_pypy.routes.v1.routes import attack as attack_route
+from attack_surface_pypy.routes.v1.routes import stats as stats_route
 
 
 def init_app(

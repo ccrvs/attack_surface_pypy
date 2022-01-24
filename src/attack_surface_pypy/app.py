@@ -1,8 +1,8 @@
 import typing
 
 import fastapi
-import starlette.types
 import starlette.datastructures
+import starlette.types
 import trio
 
 from attack_surface_pypy import protocols

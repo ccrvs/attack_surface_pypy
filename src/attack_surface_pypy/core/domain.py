@@ -5,8 +5,8 @@ import typing
 import structlog
 
 from attack_surface_pypy import types
-from attack_surface_pypy.core import graph, repository, probes
-from attack_surface_pypy.models.v1.models import vm, tag
+from attack_surface_pypy.core import graph, probes, repository
+from attack_surface_pypy.models.v1.models import tag, vm
 
 AttackerToVictimTagsMapType = typing.DefaultDict[
     tag.TagModel, typing.Set[tag.TagModel]
