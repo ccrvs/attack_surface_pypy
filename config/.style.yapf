@@ -1,0 +1,12 @@
+[style]
+based_on_style = google
+column_limit = 120
+dedent_closing_brackets = true
+indent_blank_lines = false
+space_between_ending_comma_and_closing_bracket = true
+split_all_top_level_comma_separated_values = true
+split_before_expression_after_opening_paren = true
+split_before_first_argument = true
+blank_line_before_nested_class_or_def = true
+each_dict_entry_on_separate_line = true
+coalesce_brackets = true
