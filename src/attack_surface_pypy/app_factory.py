@@ -16,10 +16,10 @@ from attack_surface_pypy.routes.v1.routes import stats as stats_route
 
 
 def init_app(
-        file_path: str,
-        application: typing.Type[main_app.Application],
-        components_container: typing.Type[container.CloudSurfaceContainer],
-        probe_instrumentality_factory: typing.Type[probes.ProbingInstrumentality]
+    file_path: str,
+    application: typing.Type[main_app.Application],
+    components_container: typing.Type[container.CloudSurfaceContainer],
+    probe_instrumentality_factory: typing.Type[probes.ProbingInstrumentality]
 ):
     from collections import namedtuple
     app = application(main_app.FastAPIApplication, title="Attack surface app.")
@@ -38,9 +38,9 @@ def init_app(
         stats_route,
     )
     # app.register_middlewares(
-        # middlewares.mark_request_session,
-        # middlewares.count_elapsed_time,
-        # middlewares.mark_request_session_and_elapsed_time_sec
+    # middlewares.mark_request_session,
+    # middlewares.count_elapsed_time,
+    # middlewares.mark_request_session_and_elapsed_time_sec
     # )
     app.register_exception_handler(pydantic.ValidationError, utils.validation_error_handler)
     return app

@@ -14,16 +14,12 @@ def get_container(request: starlette.requests.Request) -> container.CloudSurface
 
 
 def get_probe_instrumentality(
-        container_: container.CloudSurfaceContainer = fastapi.Depends(get_container)
+    container_: container.CloudSurfaceContainer = fastapi.Depends(get_container)
 ) -> probes.ProbingInstrumentality:
     return container_.get_probe_instrumentality()
 
 
 def get_probe(
-        instrumentality: probes.ProbingInstrumentality = fastapi.Depends(get_probe_instrumentality)
+    instrumentality: probes.ProbingInstrumentality = fastapi.Depends(get_probe_instrumentality)
 ) -> probes.RouteProbe:
-    return instrumentality.register_probe(
-        "Route",
-        probes.RouteProbe,
-        analytics_factory=analytics.RouteAnalytics
-    )
+    return instrumentality.register_probe("Route", probes.RouteProbe, analytics_factory=analytics.RouteAnalytics)

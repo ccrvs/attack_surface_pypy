@@ -11,10 +11,10 @@ from attack_surface_pypy import protocols
 class ASGIApplicationProto(typing.Protocol):
 
     async def __call__(
-            self,
-            scope: starlette.types.Scope,
-            receive: starlette.types.Receive,
-            send: starlette.types.Send,
+        self,
+        scope: starlette.types.Scope,
+        receive: starlette.types.Receive,
+        send: starlette.types.Send,
     ) -> None:
         ...
 
@@ -39,9 +39,9 @@ class FastAPIApplication(fastapi.FastAPI, ASGIApplicationProto):
 class Application(ApplicationProto):
 
     def __init__(
-            self,
-            app_factory: typing.Type[FastAPIApplication] = FastAPIApplication,
-            **kwargs,
+        self,
+        app_factory: typing.Type[FastAPIApplication] = FastAPIApplication,
+        **kwargs,
     ) -> None:
         self._app = app_factory(**kwargs)
 
@@ -74,9 +74,9 @@ class Application(ApplicationProto):
             self._on_teardown.add(component.dispose)
 
     def register_exception_handler(
-            self,
-            exception_object: typing.Type[Exception],
-            handler: typing.Callable[[typing.Any, typing.Type[Exception]], typing.Coroutine]
+        self,
+        exception_object: typing.Type[Exception],
+        handler: typing.Callable[[typing.Any, typing.Type[Exception]], typing.Coroutine]
     ) -> None:
         self._register_exception_handler(exception_object, handler)
 
@@ -93,9 +93,9 @@ class Application(ApplicationProto):
         self._app.middleware("http")(middleware)
 
     def _register_exception_handler(
-            self,
-            exception_object: typing.Type[Exception],
-            exception_handler: typing.Callable[[typing.Any, typing.Type[Exception]], typing.Coroutine]
+        self,
+        exception_object: typing.Type[Exception],
+        exception_handler: typing.Callable[[typing.Any, typing.Type[Exception]], typing.Coroutine]
     ) -> None:
         self._app.add_exception_handler(exception_object, exception_handler)
 

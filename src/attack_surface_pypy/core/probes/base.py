@@ -3,9 +3,7 @@
 BaseProbe -- a predecessor for all the probes created.
 """
 
-__all__ = (
-    "BaseProbe",
-)
+__all__ = ("BaseProbe", )
 
 import structlog
 

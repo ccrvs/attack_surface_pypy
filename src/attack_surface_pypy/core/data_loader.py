@@ -21,10 +21,10 @@ class CloudDataJSONFileLoader(DataLoaderProto[cloud.CloudEnvironmentModel]):
     _TIMEOUT_SEC = 30
 
     def __init__(
-            self,
-            path: typing.Union[str, pathlib.Path],
-            probe: probes.DataLoaderProbe,
-            timeout: int = _TIMEOUT_SEC,
+        self,
+        path: typing.Union[str, pathlib.Path],
+        probe: probes.DataLoaderProbe,
+        timeout: int = _TIMEOUT_SEC,
     ):
         self._path = path
         self._timeout = timeout
@@ -39,12 +39,12 @@ class CloudDataJSONFileLoader(DataLoaderProto[cloud.CloudEnvironmentModel]):
             data_model = cloud.CloudEnvironmentModel.parse_file(self._path)
             self._probe.loaded(path=self._path)
             return data_model
-                # async with await trio.open_file(self._path, 'r') as f:
-                #     content = await f.read()
-                    # self._probe.read(path=self._path)
-                    # model = cloud.CloudEnvironmentModel.parse_raw(content)
-                    # self._probe.loaded(path=self._path)
-                    # return model
+            # async with await trio.open_file(self._path, 'r') as f:
+            #     content = await f.read()
+            # self._probe.read(path=self._path)
+            # model = cloud.CloudEnvironmentModel.parse_raw(content)
+            # self._probe.loaded(path=self._path)
+            # return model
         # TODO: ValidationError?
         except TimeoutError as e:
             # FIXME: yes, I know about logger.exception, but it's now working

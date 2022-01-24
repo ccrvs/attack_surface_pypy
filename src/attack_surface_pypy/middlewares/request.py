@@ -13,8 +13,7 @@ T = typing.TypeVar("T", bound=starlette.responses.Response)
 # it turned out that middlewares are extremely slow thus I've decided to shrink them as much as possible at least into
 # a one middleware
 async def mark_request_session_and_elapsed_time_sec(
-        request: starlette.requests.Request,
-        call_next: typing.Callable[..., typing.Awaitable[T]]
+    request: starlette.requests.Request, call_next: typing.Callable[..., typing.Awaitable[T]]
 ) -> T:
     request.state.id = request_id = uuid.uuid4().hex
     context.request_id_var.set(request_id)

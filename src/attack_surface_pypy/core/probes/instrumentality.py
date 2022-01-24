@@ -4,9 +4,7 @@ This module contains a single probes' instrumentality class.
 ProbingInstrumentality -- a simple probes repository-like object.
 """
 
-__all__ = (
-    "ProbingInstrumentality",
-)
+__all__ = ("ProbingInstrumentality", )
 
 import types
 import typing
@@ -34,10 +32,10 @@ class ProbingInstrumentality:
         self._registered_components: dict[str, T] = {}
 
     def register_probe(
-            self,
-            name: str,
-            probe_klass: typing.Type[T],
-            analytics_factory: typing.Callable[[], typing.Any] = types.SimpleNamespace,
+        self,
+        name: str,
+        probe_klass: typing.Type[T],
+        analytics_factory: typing.Callable[[], typing.Any] = types.SimpleNamespace,
     ) -> T:
         """
         Instantiates a probe via the passed probe class either with the passed logger and analytics factories or

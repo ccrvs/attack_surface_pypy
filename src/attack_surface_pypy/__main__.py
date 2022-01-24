@@ -20,33 +20,21 @@ gc.disable()
 
 logger = structlog.get_logger()
 cloud_container = container.CloudSurfaceContainer.configure(
-        collections.namedtuple("State", "file_path")(".fixtures/input-3.json"),
-        domain.CloudSurfaceDomain,
-        repository.CloudDataRepository,
-        data_loader.CloudDataJSONFileLoader,
-        probes.ProbingInstrumentality,
-    )
+    collections.namedtuple("State", "file_path")(".fixtures/input-3.json"),
+    domain.CloudSurfaceDomain,
+    repository.CloudDataRepository,
+    data_loader.CloudDataJSONFileLoader,
+    probes.ProbingInstrumentality,
+)
 cloud_container.init()
 cloud_domain = cloud_container.get_data_domain()
 
-start_404 = {
-        "type": "http.response.start",
-        "status": 404,
-        "headers": [
-            [b"content-type", b"application/json"],
-        ]
-    }
-start_200 = {
-            "type": "http.response.start",
-            "status": 200,
-            "headers": [
-                [b"content-type", b"application/json"],
-            ]
-        }
+start_404 = {"type": "http.response.start", "status": 404, "headers": [[b"content-type", b"application/json"], ]}
+start_200 = {"type": "http.response.start", "status": 200, "headers": [[b"content-type", b"application/json"], ]}
 body_404 = {
-        "type": "http.response.body",
-        "body": b"{}",
-    }
+    "type": "http.response.body",
+    "body": b"{}",
+}
 
 
 async def app(scope, receive, send):

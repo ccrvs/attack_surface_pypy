@@ -19,18 +19,18 @@ import structlog
 
 logger = structlog.get_logger()
 
+
 @router.get(
-    "/attack/",
-    tags=["attack", ],
-    name="Attack VM endpoint.",
-    status_code=starlette.status.HTTP_200_OK
+    "/attack/", tags=[
+        "attack",
+    ], name="Attack VM endpoint.", status_code=starlette.status.HTTP_200_OK
 )
 async def attack(
-        vm_id: types.VM_ID,
-        response: fastapi.Response,
-        cloud_container: container.CloudSurfaceContainer = fastapi.Depends(dependencies.get_container),
-        state: starlette.requests.State = fastapi.Depends(dependencies.get_state),
-        # probe: probes.RouteProbe = fastapi.Depends(dependencies.get_probe),
+    vm_id: types.VM_ID,
+    response: fastapi.Response,
+    cloud_container: container.CloudSurfaceContainer = fastapi.Depends(dependencies.get_container),
+    state: starlette.requests.State = fastapi.Depends(dependencies.get_state),
+    # probe: probes.RouteProbe = fastapi.Depends(dependencies.get_probe),
 ):
     state.id = uuid.uuid4().hex
     # probe.request('/attack/', state.id)

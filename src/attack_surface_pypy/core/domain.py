@@ -8,12 +8,8 @@ from attack_surface_pypy import types
 from attack_surface_pypy.core import graph, probes, repository
 from attack_surface_pypy.models.v1.models import tag, vm
 
-AttackerToVictimTagsMapType = typing.DefaultDict[
-    tag.TagModel, typing.Set[tag.TagModel]
-]
-VictimTagToAttackersVMsMapType = typing.DefaultDict[
-    tag.TagModel, typing.Set[vm.VMModel]
-]
+AttackerToVictimTagsMapType = typing.DefaultDict[tag.TagModel, typing.Set[tag.TagModel]]
+VictimTagToAttackersVMsMapType = typing.DefaultDict[tag.TagModel, typing.Set[vm.VMModel]]
 logger = structlog.get_logger()
 
 
@@ -49,15 +45,11 @@ class CloudSurfaceDomain:
 
     @property  # type: ignore
     @functools.lru_cache()
-    def victim_tag_to_attackers_vms_map(
-            self
-    ) -> VictimTagToAttackersVMsMapType:
+    def victim_tag_to_attackers_vms_map(self) -> VictimTagToAttackersVMsMapType:
         self._probe.got_attackers_for_victims_tags()
         return self._get_victim_tag_to_attackers_vms_map()
 
-    def _get_victim_tag_to_attackers_vms_map(
-            self,
-    ) -> VictimTagToAttackersVMsMapType:
+    def _get_victim_tag_to_attackers_vms_map(self, ) -> VictimTagToAttackersVMsMapType:
         tags_edges_iter = self._graph.traverse_tags_edges()
 
         victim_tag_to_attacker_vms_map: VictimTagToAttackersVMsMapType = collections.defaultdict(set)

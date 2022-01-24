@@ -11,15 +11,17 @@ router = fastapi.APIRouter(prefix="/v1")
 
 @router.get(
     "/stats/",
-    tags=["stats", ],
+    tags=[
+        "stats",
+    ],
     name="Surface stats endpoint.",
     status_code=starlette.status.HTTP_200_OK,
     response_model=stats_models.StatsResponseModel,
 )
 async def stats(
-        probe: probes.RouteProbe = fastapi.Depends(dependencies.get_probe),
-        instrumentality: probes.ProbingInstrumentality = fastapi.Depends(dependencies.get_probe_instrumentality),
-        state: starlette.requests.State = fastapi.Depends(dependencies.get_state),
+    probe: probes.RouteProbe = fastapi.Depends(dependencies.get_probe),
+    instrumentality: probes.ProbingInstrumentality = fastapi.Depends(dependencies.get_probe_instrumentality),
+    state: starlette.requests.State = fastapi.Depends(dependencies.get_state),
 ):
     # probe.request('/stats/', state.id)
     domain_analytics = instrumentality.get_probe("CloudSurfaceDomain").analytics
@@ -29,7 +31,5 @@ async def stats(
     requests_count = routes_analytics.get_requests_count()
     # probe.response('/stats/', state.id, starlette.status.HTTP_200_OK)
     return stats_models.StatsResponseModel(
-        request_count=requests_count,
-        average_request_time=avg_response_time,
-        vm_count=vms_count
+        request_count=requests_count, average_request_time=avg_response_time, vm_count=vms_count
     )

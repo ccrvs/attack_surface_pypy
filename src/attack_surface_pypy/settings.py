@@ -19,7 +19,7 @@ class ServiceSettings(pydantic.BaseSettings):
 
     encoding: str = "utf-8"
     debug: bool = False
-    log_level: str = "ERROR"#'INFO'
+    log_level: str = "ERROR"  #'INFO'
     traceback_depth: typing.Optional[int] = None
     autoreload: bool = False
     backlog: int = 4096

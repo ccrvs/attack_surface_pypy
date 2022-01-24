@@ -3,9 +3,7 @@
 RouteAnalytics -- a component with base routes analytics.
 """
 
-__all__ = (
-    "RouteAnalytics",
-)
+__all__ = ("RouteAnalytics", )
 
 import statistics
 import typing

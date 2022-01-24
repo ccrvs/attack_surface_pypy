@@ -5,9 +5,7 @@ CloudSurfaceContainer -- a simple implementation of the IoC container for the ap
 
 from __future__ import annotations
 
-__all__ = (
-    "CloudSurfaceContainer",
-)
+__all__ = ("CloudSurfaceContainer", )
 
 import functools
 import typing
@@ -23,12 +21,12 @@ logger = structlog.get_logger()
 class CloudSurfaceContainer(protocols.InitializableProto):
 
     def __init__(
-            self,
-            domain_state: Domain,
-            domain_klass: typing.Type[domain.CloudSurfaceDomain],
-            repository_klass: typing.Type[repository.CloudDataRepository],
-            loader_klass: typing.Type[data_loader.CloudDataJSONFileLoader],
-            probe_instrumentality: typing.Type[probes.ProbingInstrumentality],
+        self,
+        domain_state: Domain,
+        domain_klass: typing.Type[domain.CloudSurfaceDomain],
+        repository_klass: typing.Type[repository.CloudDataRepository],
+        loader_klass: typing.Type[data_loader.CloudDataJSONFileLoader],
+        probe_instrumentality: typing.Type[probes.ProbingInstrumentality],
     ) -> None:
         self._domain_state = domain_state
         self._domain_klass = domain_klass
@@ -39,12 +37,12 @@ class CloudSurfaceContainer(protocols.InitializableProto):
 
     @classmethod
     def configure(
-            cls,
-            domain_state: Domain,
-            domain_klass: typing.Type[domain.CloudSurfaceDomain],
-            repository_klass: typing.Type[repository.CloudDataRepository],
-            loader_klass: typing.Type[data_loader.CloudDataJSONFileLoader],
-            probe_instrumentality: typing.Type[probes.ProbingInstrumentality],
+        cls,
+        domain_state: Domain,
+        domain_klass: typing.Type[domain.CloudSurfaceDomain],
+        repository_klass: typing.Type[repository.CloudDataRepository],
+        loader_klass: typing.Type[data_loader.CloudDataJSONFileLoader],
+        probe_instrumentality: typing.Type[probes.ProbingInstrumentality],
     ) -> CloudSurfaceContainer:
         instance = cls(domain_state, domain_klass, repository_klass, loader_klass, probe_instrumentality)
         instance._probe.inited()
