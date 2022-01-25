@@ -1,6 +1,6 @@
 # pylint: disable=no-member
-from orjson import loads as orjson_loads
 import pydantic
+from orjson import loads as orjson_loads  # pylint: disable=no-name-in-module
 
 from attack_surface_pypy.utils import orjson_dumps
 

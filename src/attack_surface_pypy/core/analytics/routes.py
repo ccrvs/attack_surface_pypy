@@ -43,7 +43,7 @@ class RouteAnalytics:
         finally:
             self._requests_count += 1
             self._elapsed_times.append(time.perf_counter() - started_at)
-    
+
     def register_request(self) -> None:
         self._requests_count += 1
 

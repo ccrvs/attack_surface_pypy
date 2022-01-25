@@ -1,4 +1,5 @@
 import uuid
+
 import fastapi
 import starlette.requests
 import starlette.status
@@ -21,8 +22,8 @@ router = fastapi.APIRouter(prefix="/v1")
 )
 async def stats(
     probe: probes.RouteProbe = fastapi.Depends(dependencies.get_probe),
-    domain_probe: probes.DomainProbe = fastapi.Depends(dependencies.get_domain_probe),
     state: starlette.requests.State = fastapi.Depends(dependencies.get_state),
+    domain_probe: probes.DomainProbe = fastapi.Depends(dependencies.get_domain_probe),
 ):
     state.id = request_id = uuid.uuid4().hex
     with probe.trace_request(request_id):
@@ -32,5 +33,7 @@ async def stats(
         avg_response_time = routes_analytics.get_mean_response_time()
         requests_count = routes_analytics.get_requests_count()
         return stats_models.StatsResponseModel(
-            request_count=requests_count, average_request_time=avg_response_time, vm_count=vms_count,
+            request_count=requests_count,
+            average_request_time=avg_response_time,
+            vm_count=vms_count,
         )

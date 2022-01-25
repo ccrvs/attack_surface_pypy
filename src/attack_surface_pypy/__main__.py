@@ -6,43 +6,47 @@ import typing
 
 import uvicorn
 
-from attack_surface_pypy import asgi, settings, __version__, __service_name__
+from attack_surface_pypy import __service_name__, __version__, asgi
 from attack_surface_pypy import logging as app_logging
+from attack_surface_pypy import settings
 
 # logger = structlog.get_logger()
 gc.disable()
 
-
-parser = argparse.ArgumentParser(description='App initial arguments.', prog=__service_name__)
+parser = argparse.ArgumentParser(description="App initial arguments.", prog=__service_name__)
 parser.add_argument(
-    '-f', '--file-path',
-    help='provide path to a file with initial data.',
+    "-f",
+    "--file-path",
+    help="provide path to a file with initial data.",
     type=pathlib.Path,
-    metavar='.fixtures/xxx.json',
+    metavar=".fixtures/xxx.json",
     required=True,
     choices=[
-        pathlib.Path('.fixtures/input-1.json'),
-        pathlib.Path('.fixtures/input-2.json'),
-        pathlib.Path('.fixtures/input-3.json'),
-        pathlib.Path('.fixtures/input-4.json'),
-        pathlib.Path('.fixtures/input-5.json'),
+        pathlib.Path(".fixtures/input-1.json"),
+        pathlib.Path(".fixtures/input-2.json"),
+        pathlib.Path(".fixtures/input-3.json"),
+        pathlib.Path(".fixtures/input-4.json"),
+        pathlib.Path(".fixtures/input-5.json"),
     ],
 )
 parser.add_argument(
-    '-n', '--host',
-    help='set host for the service.',
+    "-n",
+    "--host",
+    help="set host for the service.",
     type=str,
-    metavar='localhost',
+    metavar="localhost",
 )
 parser.add_argument(
-    '-p', '--port',
+    "-p",
+    "--port",
     type=int,
-    help='set port for the service.',
+    help="set port for the service.",
 )
 parser.add_argument(
-    '-v', '--version',
-    action='version',
-    version=f'%(prog)s {__version__}',
+    "-v",
+    "--version",
+    action="version",
+    version=f"%(prog)s {__version__}",
 )
 
 
@@ -70,8 +74,7 @@ if __name__ == "__main__":
         service_settings = settings.Service(host=ns.host, port=ns.port)
     app_settings = settings.Settings(domain=domain_settings, service=service_settings)
     log_config = app_logging.LoggingConfig(
-        log_level=app_settings.log_level,
-        traceback_depth=app_settings.traceback_depth
+        log_level=app_settings.log_level, traceback_depth=app_settings.traceback_depth
     ).prepare_logger()
     # context = types.Context(file_path=ns.file_path, host=ns.host, port=ns.port)  # TODO: update settings from args?
     sys.exit(run_uvicorn(app_settings, log_config))  # TODO: hardcoded name, awry fabric

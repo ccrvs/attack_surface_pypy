@@ -1,7 +1,7 @@
 import typing
 
-from attack_surface_pypy import app as main_app, settings
-from attack_surface_pypy import app_factory
+from attack_surface_pypy import app as main_app
+from attack_surface_pypy import app_factory, settings
 from attack_surface_pypy.core import container
 
 

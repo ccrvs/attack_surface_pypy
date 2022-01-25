@@ -5,11 +5,7 @@ import starlette.requests
 import starlette.status
 
 from attack_surface_pypy import dependencies, types
-from attack_surface_pypy.core import (
-    domain,
-    exceptions,
-    probes,
-)
+from attack_surface_pypy.core import domain, exceptions, probes
 
 router = fastapi.APIRouter(prefix="/v1")
 

@@ -1,6 +1,6 @@
 __all__ = (
-    'validation_error_handler',
-    'orjson_dumps',
+    "validation_error_handler",
+    "orjson_dumps",
 )
 
 import typing
@@ -16,4 +16,4 @@ async def validation_error_handler(request: typing.Any, exception: typing.Type[E
 
 
 def orjson_dumps(v: typing.Any, *, default: typing.Any) -> str:
-    return orjson.dumps(v, default=default).decode('utf-8')
+    return orjson.dumps(v, default=default).decode("utf-8")  # pylint: disable=no-member

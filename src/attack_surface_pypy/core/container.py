@@ -17,7 +17,14 @@ logger = structlog.get_logger()
 
 
 class CloudSurfaceContainer:
-    __slots__ = ('_data_loader', '_data_repository', '_data_domain', '_probe_instrumentality', '_configured', '_probe', )
+    __slots__ = (
+        "_data_loader",
+        "_data_repository",
+        "_data_domain",
+        "_probe_instrumentality",
+        "_configured",
+        "_probe",
+    )
 
     def __init__(self, probe: probes.ContainerProbe) -> None:
         self._probe = probe
@@ -57,20 +64,20 @@ class CloudSurfaceContainer:
 
     def get_data_loader(self) -> typing.Optional[data_loader.CloudDataJSONFileLoader]:
         assert self._configured, "The class must be configured first."
-        self._probe.component_acquired(component='data_loader')
+        self._probe.component_acquired(component="data_loader")
         return self._data_loader
 
     def get_data_repository(self) -> typing.Optional[repository.CloudDataRepository]:
         assert self._configured, "The class must be configured first."
-        self._probe.component_acquired(component='data_repository')
+        self._probe.component_acquired(component="data_repository")
         return self._data_repository
 
     def get_data_domain(self) -> typing.Optional[domain.CloudSurfaceDomain]:
         assert self._configured, "The class must be configured first."
-        self._probe.component_acquired(component='data_domain')
+        self._probe.component_acquired(component="data_domain")
         return self._data_domain
 
     def get_probe_instrumentality(self) -> typing.Optional[probes.ProbingInstrumentality]:
         assert self._configured, "The class must be configured first."
-        self._probe.component_acquired(component='probe_instrumentality')
+        self._probe.component_acquired(component="probe_instrumentality")
         return self._probe_instrumentality
