@@ -5,8 +5,6 @@ BaseProbe -- a predecessor for all the probes created.
 
 __all__ = ("BaseProbe", )
 
-import structlog
-
 
 class BaseProbe:
     """
@@ -16,7 +14,6 @@ class BaseProbe:
     to abstract events but to get together them within specific domain events.
     """
     __slots__ = ("_analytics", )
-    _logger = structlog.get_logger()
 
     def __init__(self, analytics_factory):
         self._analytics = analytics_factory()

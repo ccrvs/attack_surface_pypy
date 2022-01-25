@@ -1,3 +1,4 @@
+import uuid
 import fastapi
 import starlette.requests
 import starlette.status
@@ -20,16 +21,16 @@ router = fastapi.APIRouter(prefix="/v1")
 )
 async def stats(
     probe: probes.RouteProbe = fastapi.Depends(dependencies.get_probe),
-    instrumentality: probes.ProbingInstrumentality = fastapi.Depends(dependencies.get_probe_instrumentality),
+    domain_probe: probes.DomainProbe = fastapi.Depends(dependencies.get_domain_probe),
     state: starlette.requests.State = fastapi.Depends(dependencies.get_state),
 ):
-    # probe.request('/stats/', state.id)
-    domain_analytics = instrumentality.get_probe("CloudSurfaceDomain").analytics
-    routes_analytics = probe.analytics
-    vms_count = domain_analytics.vms_count
-    avg_response_time = routes_analytics.get_mean_response_time()
-    requests_count = routes_analytics.get_requests_count()
-    # probe.response('/stats/', state.id, starlette.status.HTTP_200_OK)
-    return stats_models.StatsResponseModel(
-        request_count=requests_count, average_request_time=avg_response_time, vm_count=vms_count
-    )
+    state.id = request_id = uuid.uuid4().hex
+    with probe.trace_request(request_id):
+        routes_analytics = probe.analytics
+        domain_analytics = domain_probe.analytics
+        vms_count = domain_analytics.vms_count
+        avg_response_time = routes_analytics.get_mean_response_time()
+        requests_count = routes_analytics.get_requests_count()
+        return stats_models.StatsResponseModel(
+            request_count=requests_count, average_request_time=avg_response_time, vm_count=vms_count,
+        )

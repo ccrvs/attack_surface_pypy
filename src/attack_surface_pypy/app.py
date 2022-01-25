@@ -1,42 +1,17 @@
+import asyncio
 import typing
 
 import fastapi
 import starlette.datastructures
-import starlette.types
-import trio
 
 from attack_surface_pypy import protocols
 
 
-class ASGIApplicationProto(typing.Protocol):
-
-    async def __call__(
-        self,
-        scope: starlette.types.Scope,
-        receive: starlette.types.Receive,
-        send: starlette.types.Send,
-    ) -> None:
-        ...
-
-
-class ApplicationProto(typing.Protocol):
-
-    @property
-    def state(self) -> starlette.datastructures.State:
-        ...
-
-    def register_routes(self, *routes, **kwargs) -> None:
-        ...
-
-    def register_middlewares(self, *middlewares) -> None:
-        ...
-
-
-class FastAPIApplication(fastapi.FastAPI, ASGIApplicationProto):
+class FastAPIApplication(fastapi.FastAPI, protocols.ASGIApplicationProto):
     ...
 
 
-class Application(ApplicationProto):
+class Application(protocols.ApplicationProto):
 
     def __init__(
         self,
@@ -104,6 +79,4 @@ class Application(ApplicationProto):
         self._app.on_event("shutdown")(self._teardown)
 
     async def _gather(self, *tasks: typing.Callable) -> None:
-        async with trio.open_nursery() as nursery:
-            for task in tasks:
-                nursery.start_soon(task)
+        return await asyncio.gather(*(task() for task in tasks))

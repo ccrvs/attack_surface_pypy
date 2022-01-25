@@ -25,17 +25,17 @@ class CloudDataRepository:
         self._probe.inited()
 
     @classmethod
-    def load_from(cls, loader: data_loader.DataLoaderProto, probe) -> CloudDataRepository:
+    def load_from(cls, loader: data_loader.DataLoaderProto, probe: probes.RepositoryProbe) -> CloudDataRepository:
         cloud_data = loader.load()
         repository = cls(cloud_data, probe)
-        repository._probe.loaded(from_=loader.__class__.__name__)
+        probe.loaded(from_=loader.__class__.__name__)
         return repository
 
     @classmethod
     def from_json(
         cls,
         path: typing.Union[str, pathlib.Path],
-        probe,
+        probe: probes.RepositoryProbe,
     ) -> CloudDataRepository:
         warnings.warn(
             "Stale method, use `load_from` instead.", DeprecationWarning, stacklevel=2

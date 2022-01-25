@@ -1065,6 +1065,14 @@ typing-extensions = ">=3.7.4"
 mypy = ["mypy (>=0.920)"]
 
 [[package]]
+name = "types-orjson"
+version = "3.6.2"
+description = "Typing stubs for orjson"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "typing-extensions"
 version = "4.0.1"
 description = "Backported and Experimental Type Hints for Python 3.6+"
@@ -1205,7 +1213,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "c7186fca6284f9d0a0c88f05b99955cd6b1fe398f93ae353b82e59b0c4b7ae1a"
+content-hash = "caff44e706c7c6dfef71df3976625166e031c05407e87c7fcfcc12cbc72bd558"
 
 [metadata.files]
 anyio = [
@@ -2176,6 +2184,10 @@ trio = [
 trio-typing = [
     {file = "trio-typing-0.7.0.tar.gz", hash = "sha256:5bb2184de144c15f2cc252bba4fd167125758df7339c4f7bc40538940aefa3b9"},
     {file = "trio_typing-0.7.0-py3-none-any.whl", hash = "sha256:156ba760f444aa2f8af43f4459d462415fc297234feb27018e4e902bb62a122b"},
+]
+types-orjson = [
+    {file = "types-orjson-3.6.2.tar.gz", hash = "sha256:cf9afcc79a86325c7aff251790338109ed6f6b1bab09d2d4262dd18c85a3c638"},
+    {file = "types_orjson-3.6.2-py3-none-any.whl", hash = "sha256:22ee9a79236b6b0bfb35a0684eded62ad930a88a56797fa3c449b026cf7dbfe4"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.0.1-py3-none-any.whl", hash = "sha256:7f001e5ac290a0c0401508864c7ec868be4e701886d5b573a9528ed3973d9d3b"},

@@ -1,8 +1,7 @@
+# pylint: disable=no-member
 import typing
 
 import pydantic
-
-from attack_surface_pypy import constants
 
 
 class Service(pydantic.BaseModel):
@@ -11,15 +10,16 @@ class Service(pydantic.BaseModel):
 
 
 class Domain(pydantic.BaseModel):
-    file_path: pydantic.FilePath = pydantic.Field("./.json")  # TODO: consider multiple files?
+    file_path: pydantic.FilePath = pydantic.Field(...)  # TODO: consider multiple files?
 
 
-class ServiceSettings(pydantic.BaseSettings):
-    service: Service = pydantic.Field(Service())
+class Settings(pydantic.BaseSettings):
+    service: Service
+    domain: Domain
 
     encoding: str = "utf-8"
     debug: bool = False
-    log_level: str = "ERROR"  #'INFO'
+    log_level: str = "ERROR"
     traceback_depth: typing.Optional[int] = None
     autoreload: bool = False
     backlog: int = 4096
@@ -30,4 +30,4 @@ class ServiceSettings(pydantic.BaseSettings):
         env_nested_delimiter = "__"
 
 
-settings = ServiceSettings()
+# settings = ServiceSettings()

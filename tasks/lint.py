@@ -15,7 +15,7 @@ def bandit(context, src_path=SRC_PATH, config_path=CONFIG_PATH):
 @invoke.task
 def vulture(context, src_path=SRC_PATH, min_confidence=100):
     context.run(
-        "vulture {src_path} --min-confidence {min_confidence}".format(src_path=src_path, min_confidence=min_confidence)
+        "vulture {src_path} --min-confidence {min_confidence} --exclude *protocols.py".format(src_path=src_path, min_confidence=min_confidence)
     )
     print('vulture ok.')
 
@@ -34,7 +34,13 @@ def pylint(context, src_path=SRC_PATH, config_path=CONFIG_PATH):
     print('pylint ok.')
 
 
-@invoke.task(name='lint', default=True, post=[flake, vulture, pylint, bandit, finalize])
+@invoke.task
+def mypy(context, src_path=SRC_PATH):
+    context.run('mypy {src_path}'.format(src_path=src_path))
+    print('mypy ok.')
+
+
+@invoke.task(name='lint', default=True, pre=[flake, vulture, pylint, bandit, mypy, finalize])
 def lint_all(_):
     print('lint ok.')
 
@@ -44,4 +50,5 @@ lint.add_task(bandit, 'bandit')
 lint.add_task(vulture, 'vulture')
 lint.add_task(flake, 'flake')
 lint.add_task(pylint, 'pylint')
+lint.add_task(mypy, 'mypy')
 lint.add_task(lint_all, 'all')

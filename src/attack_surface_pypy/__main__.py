@@ -1,92 +1,77 @@
-import collections
+import argparse
 import gc
+import pathlib
 import sys
-import urllib.parse
+import typing
 
-import orjson
 import uvicorn
 
-from attack_surface_pypy import asgi, settings
-from attack_surface_pypy.core import (
-    container,
-    data_loader,
-    domain,
-    probes,
-    repository,
-)
-from attack_surface_pypy.logging import get_default_logging_config, structlog
+from attack_surface_pypy import asgi, settings, __version__, __service_name__
+from attack_surface_pypy import logging as app_logging
 
+# logger = structlog.get_logger()
 gc.disable()
 
-logger = structlog.get_logger()
-cloud_container = container.CloudSurfaceContainer.configure(
-    collections.namedtuple("State", "file_path")(".fixtures/input-3.json"),
-    domain.CloudSurfaceDomain,
-    repository.CloudDataRepository,
-    data_loader.CloudDataJSONFileLoader,
-    probes.ProbingInstrumentality,
+
+parser = argparse.ArgumentParser(description='App initial arguments.', prog=__service_name__)
+parser.add_argument(
+    '-f', '--file-path',
+    help='provide path to a file with initial data.',
+    type=pathlib.Path,
+    metavar='.fixtures/xxx.json',
+    required=True,
+    choices=[
+        pathlib.Path('.fixtures/input-1.json'),
+        pathlib.Path('.fixtures/input-2.json'),
+        pathlib.Path('.fixtures/input-3.json'),
+        pathlib.Path('.fixtures/input-4.json'),
+        pathlib.Path('.fixtures/input-5.json'),
+    ],
 )
-cloud_container.init()
-cloud_domain = cloud_container.get_data_domain()
-
-start_404 = {"type": "http.response.start", "status": 404, "headers": [[b"content-type", b"application/json"], ]}
-start_200 = {"type": "http.response.start", "status": 200, "headers": [[b"content-type", b"application/json"], ]}
-body_404 = {
-    "type": "http.response.body",
-    "body": b"{}",
-}
-
-
-async def app(scope, receive, send):
-    assert scope["type"] == "http"
-
-    if scope["path"].startswith("/api/v1/attack"):
-        query_params = urllib.parse.parse_qs(scope["query_string"])
-        vm_ids = query_params.get(b"vm_id", None)
-        if vm_ids is None:
-            await _yield_404(send)
-        vm_id, = vm_ids
-        vm_id = vm_id.decode("utf-8")
-        try:
-            vms_ids = cloud_domain.get_attackers_for_vm_id(vm_id)
-            await _yield_200(send, data=list(vms_ids))
-            return
-        except Exception:
-            ...
-    await _yield_404(send)
+parser.add_argument(
+    '-n', '--host',
+    help='set host for the service.',
+    type=str,
+    metavar='localhost',
+)
+parser.add_argument(
+    '-p', '--port',
+    type=int,
+    help='set port for the service.',
+)
+parser.add_argument(
+    '-v', '--version',
+    action='version',
+    version=f'%(prog)s {__version__}',
+)
 
 
-async def _yield_404(send):
-    await send(start_404)
-    await send(body_404)
-
-
-async def _yield_200(send, data=None):
-    data = data or {}
-    await send(start_200)
-    await send({
-        "type": "http.response.body",
-        "body": orjson.dumps(data),
-    })
-
-
-def run_uvicorn(file_path):
+def run_uvicorn(app_settings: settings.Settings, log_config: typing.Optional[dict] = None):
     uvicorn.run(
-        lambda: asgi.create_app(path=file_path),
+        asgi.create_app(app_settings),
         # loop='uvloop',
         http="httptools",
-        host=settings.service.host,
-        port=settings.service.port,
-        log_config=get_default_logging_config(settings.log_level),
-        reload=settings.autoreload,
-        debug=settings.debug,
-        access_log=settings.debug,
-        backlog=settings.backlog,
+        host=app_settings.service.host,
+        port=app_settings.service.port,
+        log_config=log_config or {},
+        reload=app_settings.autoreload,
+        debug=app_settings.debug,
+        access_log=app_settings.debug,
+        backlog=app_settings.backlog,
         factory=True,
     )
 
 
 if __name__ == "__main__":
-    _, path = sys.argv  # TODO: pass structure with initial values
-    # sys.exit(run_uvicorn(file_path=path))  # TODO: hardcoded name, awry fabric
-    uvicorn.run(app, access_log=False, debug=False, http="httptools", log_config=get_default_logging_config("ERROR"))
+    ns = parser.parse_args()
+    domain_settings = settings.Domain(file_path=ns.file_path)
+    service_settings = settings.Service()
+    if ns.host or ns.port:
+        service_settings = settings.Service(host=ns.host, port=ns.port)
+    app_settings = settings.Settings(domain=domain_settings, service=service_settings)
+    log_config = app_logging.LoggingConfig(
+        log_level=app_settings.log_level,
+        traceback_depth=app_settings.traceback_depth
+    ).prepare_logger()
+    # context = types.Context(file_path=ns.file_path, host=ns.host, port=ns.port)  # TODO: update settings from args?
+    sys.exit(run_uvicorn(app_settings, log_config))  # TODO: hardcoded name, awry fabric

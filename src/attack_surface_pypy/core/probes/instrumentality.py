@@ -11,7 +11,9 @@ import typing
 
 import structlog
 
-T = typing.TypeVar("T", bound="BaseProbe")
+from attack_surface_pypy.core.probes import base
+
+logger = structlog.get_logger()
 
 
 class ProbingInstrumentality:
@@ -29,14 +31,14 @@ class ProbingInstrumentality:
     """
 
     def __init__(self) -> None:
-        self._registered_components: dict[str, T] = {}
+        self._registered_components: dict[str, base.BaseProbe] = {}
 
     def register_probe(
         self,
         name: str,
-        probe_klass: typing.Type[T],
+        probe_klass: typing.Type[base.BaseProbe],
         analytics_factory: typing.Callable[[], typing.Any] = types.SimpleNamespace,
-    ) -> T:
+    ) -> base.BaseProbe:
         """
         Instantiates a probe via the passed probe class either with the passed logger and analytics factories or
         with default otherwise. Saves the new probe inside a map.
@@ -46,12 +48,13 @@ class ProbingInstrumentality:
         :param analytics_factory: callable object returns an analytics instance.
         :return: a registered probe.
         """
-        if name not in self._registered_components:
-            component = probe_klass(analytics_factory)
-            self._registered_components[name] = component
-        return self._registered_components[name]
+        try:
+            component = self.get_probe(name)
+        except KeyError:  # due to the rarity of the case, it will be faster to try than check
+            self._registered_components[name] = component = probe_klass(analytics_factory)
+        return component
 
-    def get_probe(self, name: str) -> T:
+    def get_probe(self, name: str) -> base.BaseProbe:
         """
         Acquire an already registered probe by the key.
         :param name: the name a probe were registered with.

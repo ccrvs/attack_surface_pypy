@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 import typing
 
-from attack_surface_pypy.core import exceptions, probes, utils
+from attack_surface_pypy.core import exceptions, probes
 from attack_surface_pypy.logging import structlog
 from attack_surface_pypy.models.v1.models import base, cloud
 
@@ -30,7 +30,6 @@ class CloudDataJSONFileLoader(DataLoaderProto[cloud.CloudEnvironmentModel]):
         self._timeout = timeout
         self._probe = probe
 
-        # TODO: maybe switch to domain probing logging?
         self._probe.inited(timeout=timeout, path=path)
 
     def load(self) -> cloud.CloudEnvironmentModel:
@@ -47,7 +46,7 @@ class CloudDataJSONFileLoader(DataLoaderProto[cloud.CloudEnvironmentModel]):
             # return model
         # TODO: ValidationError?
         except TimeoutError as e:
-            # FIXME: yes, I know about logger.exception, but it's now working
+            # FIXME: yes, I know about logger.exception, but it's not working now
             self._probe.error(error=e)
 
             raise exceptions.TimeoutExceededError(self._timeout) from e
