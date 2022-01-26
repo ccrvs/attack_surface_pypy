@@ -4,7 +4,7 @@ import pathlib
 import sys
 import typing
 
-import uvicorn
+import uvicorn  # type: ignore
 
 from attack_surface_pypy import __service_name__, __version__, asgi
 from attack_surface_pypy import logging as app_logging

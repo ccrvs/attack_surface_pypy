@@ -1,3 +1,4 @@
+import typing
 import fastapi
 import starlette.datastructures
 import starlette.requests
@@ -15,13 +16,13 @@ async def get_container(request: starlette.requests.Request) -> container.CloudS
 
 async def get_data_domain(
     container_: container.CloudSurfaceContainer = fastapi.Depends(get_container)
-) -> domain.CloudSurfaceDomain:
+) -> typing.Optional[domain.CloudSurfaceDomain]:
     return container_.get_data_domain()
 
 
 async def get_probe_instrumentality(
     container_: container.CloudSurfaceContainer = fastapi.Depends(get_container)
-) -> probes.ProbingInstrumentality:
+) -> typing.Optional[probes.ProbingInstrumentality]:
     return container_.get_probe_instrumentality()
 
 

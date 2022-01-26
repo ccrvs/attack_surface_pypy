@@ -9,11 +9,9 @@ __all__ = ("ProbingInstrumentality", )
 import types
 import typing
 
-import structlog
-
 from attack_surface_pypy.core.probes import base
 
-logger = structlog.get_logger()
+T_co = typing.TypeVar('T_co', covariant=True, bound=base.BaseProbe)
 
 
 class ProbingInstrumentality:
@@ -31,14 +29,14 @@ class ProbingInstrumentality:
     """
 
     def __init__(self) -> None:
-        self._registered_components: dict[str, base.BaseProbe] = {}
+        self._registered_components: dict[str, T_co] = {}  # type: ignore  # FIXME: how am I suppose to bound this T?
 
     def register_probe(
         self,
         name: str,
-        probe_klass: typing.Type[base.BaseProbe],
+        probe_klass: typing.Callable[[typing.Callable[[], typing.Any]], T_co],
         analytics_factory: typing.Callable[[], typing.Any] = types.SimpleNamespace,
-    ) -> base.BaseProbe:
+    ) -> T_co:
         """
         Instantiates a probe via the passed probe class either with the passed logger and analytics factories or
         with default otherwise. Saves the new probe inside a map.
@@ -49,12 +47,12 @@ class ProbingInstrumentality:
         :return: a registered probe.
         """
         try:
-            component = self.get_probe(name)
+            component: T_co = self.get_probe(name)
         except KeyError:  # due to the rarity of the case, it will be faster to try than check
             self._registered_components[name] = component = probe_klass(analytics_factory)
         return component
 
-    def get_probe(self, name: str) -> base.BaseProbe:
+    def get_probe(self, name: str) -> T_co:
         """
         Acquire an already registered probe by the key.
         :param name: the name a probe were registered with.
